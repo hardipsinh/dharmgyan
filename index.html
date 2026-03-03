@@ -93,6 +93,9 @@
                 <button onclick="location.reload()" class="px-10 py-4 bg-white text-black font-black rounded-2xl">ફરીથી રમો</button>
             </div>
         </div>
+
+<div id="hitCount"></div>
+    
     </main>
 
     <!-- Hidden Audio -->
@@ -415,6 +418,58 @@
         }
 
         window.onload = init;
+
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const TRACKER_BASE = "https://hardipsinh.pythonanywhere.com";
+  const TRACK_URL = `${TRACKER_BASE}/track`;
+  const websiteName = "dharmgyan";
+
+  // Build a minimal payload with just a few useful fields
+  const payload = {
+    website: websiteName,
+    page_url: window.location.href,     // full current URL
+    referrer: document.referrer || "",  // where the user came from
+    user_agent: navigator.userAgent || "" // optional: browser UA
+    // If you want one more: pathname
+    // pathname: window.location.pathname
+  };
+
+  // Timeout controller (optional)
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 5000);
+
+  try {
+    const res = await fetch(TRACK_URL, {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept-Language": navigator.language || "en",
+        // "X-Tracker-Secret": "your-shared-secret", // if you enforce a server-side secret
+      },
+      body: JSON.stringify(payload),
+      signal: controller.signal,
+      cache: "no-store"
+    });
+    clearTimeout(timeout);
+
+    if (!res.ok) {
+      console.error("Track failed:", res.status, res.statusText);
+      return;
+    }
+
+    const data = await res.json();
+    console.log("Tracked:", data.website, "count:", data.count);
+
+    const hitCountEl = document.getElementById("hitCount");
+    if (hitCountEl) hitCountEl.textContent = `Hits: ${data.count}`;
+  } catch (err) {
+    clearTimeout(timeout);
+    console.error("Error calling tracker:", err);
+  }
+});
+        
     </script>
 </body>
 </html>
