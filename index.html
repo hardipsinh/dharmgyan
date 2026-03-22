@@ -3,172 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>મહાભારત રણસંગ્રામ - અલ્ટીમેટ</title>
+    <title>મહાભારત રણસંગ્રામ - દિવ્ય અસ્ત્ર એડિશન</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Hind+Vadodara:wght@400;700&display=swap');
-        body { font-family: 'Hind Vadodara', sans-serif; background: #0f0505; color: #fce7bc; overflow-x: hidden; }
-        .glass { background: rgba(30, 10, 10, 0.98); border: 2px solid #b45309; box-shadow: 0 0 30px rgba(180, 83, 9, 0.4); }
-        .dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; background: #333; margin: 0 3px; }
-        .dot-correct { background: #10b981 !important; }
-        .dot-wrong { background: #ef4444 !important; }
-        .option-btn { background: rgba(255, 255, 255, 0.03); border: 1px solid #78350f; transition: 0.2s; cursor: pointer; width: 100%; text-align: left; }
-        .option-btn:hover { background: #451a03; border-color: #f59e0b; }
-        .bow-track { height: 4px; background: rgba(180, 83, 9, 0.1); position: relative; width: 100%; border-radius: 2px; }
-        #bow-arrow { position: absolute; top: -16px; font-size: 20px; transition: left 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform: rotate(45deg); }
-        #share-canvas-area { position: absolute; left: -9999px; top: -9999px; }
-        .custom-scroll::-webkit-scrollbar { width: 4px; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #b45309; }
+        body { font-family: 'Hind Vadodara', sans-serif; background: #0a0505; color: #fce7bc; overflow-x: hidden; }
+        .glass { background: rgba(25, 10, 10, 0.98); border: 2px solid #b45309; box-shadow: 0 0 40px rgba(180, 83, 9, 0.3); }
+        .option-btn { background: rgba(255, 255, 255, 0.03); border: 1px solid #78350f; transition: all 0.2s ease; cursor: pointer; width: 100%; text-align: left; }
+        .option-btn:hover { background: #451a03; transform: translateX(5px); border-color: #f59e0b; }
+        .bow-track { height: 6px; background: rgba(180, 83, 9, 0.1); position: relative; width: 100%; border-radius: 10px; }
+        #bow-arrow { position: absolute; top: -18px; font-size: 24px; transition: left 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform: rotate(45deg); filter: drop-shadow(0 0 5px #f59e0b); }
+        .reward-card { animation: slideUp 0.5s ease-out; }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .custom-scroll::-webkit-scrollbar { width: 5px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #b45309; border-radius: 10px; }
+        #capture-zone { position: fixed; left: -9999px; top: 0; width: 500px; padding: 40px; background: #1a0a0a; border: 10px solid #b45309; color: #fce7bc; text-align: center; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center p-4">
 
-    <!-- Screen for Capturing (Hidden) -->
-    <div id="share-canvas-area" class="w-[400px] p-8 bg-[#1a0a0a] text-[#fce7bc] border-4 border-[#b45309] text-center">
-        <h1 class="text-3xl font-black text-amber-500 mb-2">MAHABHARAT WAR</h1>
-        <p id="capture-name" class="text-xl mb-4 opacity-70"></p>
-        <div id="capture-gift" class="text-6xl mb-4">🏹</div>
-        <div class="grid grid-cols-2 gap-4 mt-6">
-            <div class="bg-black/40 p-4 border border-amber-900 rounded-xl">
-                <p class="text-xs uppercase">Level</p>
-                <p id="capture-lvl" class="text-2xl font-bold">1</p>
-            </div>
-            <div class="bg-black/40 p-4 border border-amber-900 rounded-xl">
-                <p class="text-xs uppercase">Score</p>
-                <p id="capture-score" class="text-2xl font-bold">0</p>
-            </div>
+    <!-- Share Capture Area (Hidden) -->
+    <div id="capture-zone">
+        <h1 style="font-size: 40px; color: #f59e0b; font-weight: 900; margin-bottom: 10px;">MAHABHARAT WAR</h1>
+        <p id="cap-user" style="font-size: 24px; opacity: 0.8;"></p>
+        <div id="cap-reward-icon" style="font-size: 100px; margin: 30px 0;">🏹</div>
+        <h2 id="cap-reward-name" style="font-size: 32px; color: #fce7bc;">ગાંડીવ ધનુષ</h2>
+        <div style="display: flex; justify-content: space-around; margin-top: 40px;">
+            <div><p style="font-size: 14px; opacity: 0.6;">LEVEL</p><p id="cap-lvl" style="font-size: 30px; font-weight: 900;">1</p></div>
+            <div><p style="font-size: 14px; opacity: 0.6;">SCORE</p><p id="cap-score" style="font-size: 30px; font-weight: 900;">1200</p></div>
         </div>
-        <p class="mt-8 text-xs italic">શું તમે મને હરાવી શકશો?</p>
+        <p style="margin-top: 50px; font-style: italic; opacity: 0.5;">ડાઉનલોડ કરો અને તમારા મિત્રોને ચેલેન્જ આપો!</p>
     </div>
 
-    <!-- Start Name Popup -->
+    <!-- Initial Name Popup -->
     <div id="popup" class="fixed inset-0 flex items-center justify-center p-6 z-[200] hidden">
-        <div class="glass p-8 rounded-3xl max-w-md w-full text-center">
-            <h2 class="text-3xl font-black mb-6 text-amber-500 uppercase italic">યોદ્ધાનું સ્વાગત!</h2>
-            <input type="text" id="username-input" class="w-full p-4 bg-black border border-amber-600 rounded-xl mb-6 text-center text-xl text-white outline-none" placeholder="તમારું નામ...">
-            <button onclick="startGame()" class="w-full py-4 bg-amber-600 rounded-xl font-bold text-black text-xl hover:bg-amber-500 shadow-2xl">યુદ્ધ શરૂ કરો</button>
+        <div class="glass p-10 rounded-[3rem] max-w-md w-full text-center border-4">
+            <div class="text-6xl mb-6 animate-bounce">🚩</div>
+            <h2 class="text-3xl font-black mb-6 text-amber-500 uppercase italic">ધર્મયુદ્ધમાં સ્વાગત છે!</h2>
+            <input type="text" id="username-input" class="w-full p-5 bg-black border-2 border-amber-600 rounded-2xl mb-6 text-center text-xl text-white outline-none focus:border-amber-400 transition" placeholder="યોદ્ધાનું નામ લખો...">
+            <button onclick="startGame()" class="w-full py-5 bg-gradient-to-r from-amber-700 to-amber-500 rounded-2xl font-black text-black text-2xl hover:scale-105 transition shadow-[0_0_20px_rgba(180,83,9,0.5)]">યુદ્ધ પ્રારંભ</button>
         </div>
     </div>
 
     <!-- Header -->
     <header class="w-full max-w-4xl flex justify-between items-center mb-8 py-4 border-b border-amber-900/40">
         <div>
-            <h1 class="text-2xl font-black text-amber-500 italic uppercase">MAHABHARAT</h1>
+            <h1 class="text-2xl font-black text-amber-500 italic uppercase flex items-center gap-2">
+                <span>⚔️</span> MAHABHARAT
+            </h1>
             <p id="player-display" class="text-[10px] text-amber-200/50 mt-1 uppercase font-bold tracking-widest"></p>
         </div>
         <div class="flex gap-2">
-            <button onclick="toggleAudio()" id="audio-btn" class="bg-amber-900/30 p-2 rounded-xl border border-amber-800 text-lg">🔊</button>
-            <button onclick="showInventory()" class="bg-amber-900/30 px-3 py-1 rounded-xl border border-amber-800 text-[10px] font-black uppercase tracking-tighter">🎒 શસ્ત્રો</button>
-            <button onclick="showGlobalStats()" class="bg-amber-900/30 px-3 py-1 rounded-xl border border-amber-800 text-[10px] font-black uppercase">📊 Stats</button>
-            <button onclick="toggleLang()" id="lang-btn" class="bg-amber-700 px-3 py-1 rounded text-[10px] font-bold">GU/EN</button>
+            <button onclick="toggleAudio()" id="audio-btn" class="bg-amber-900/30 p-2 rounded-xl border border-amber-800">🔊</button>
+            <button onclick="showInventory()" class="bg-amber-900/30 px-3 py-1 rounded-xl border border-amber-800 text-[10px] font-black uppercase">🎒 ભાથો</button>
+            <button onclick="showStats()" class="bg-amber-900/30 px-3 py-1 rounded-xl border border-amber-800 text-[10px] font-black uppercase">📊 આંકડા</button>
+            <button onclick="toggleLang()" class="bg-amber-700 px-3 py-1 rounded text-[10px] font-bold">GU/EN</button>
         </div>
     </header>
 
     <main class="w-full max-w-2xl">
-        <!-- Progress with Arrow -->
+        <!-- Progress Section -->
         <div class="mb-10 px-4">
-            <div class="flex justify-between text-[10px] font-bold text-amber-600 uppercase mb-4">
-                <div class="flex items-center gap-2">
-                    <button onclick="prevLevel()" class="hover:text-white">⏮️</button>
-                    <span>લેવલ <span id="level-num">1</span></span>
-                    <button onclick="jumpNextLevel()" id="next-lvl-jump" class="hidden hover:text-white">⏭️</button>
+            <div class="flex justify-between text-[11px] font-bold text-amber-600 uppercase mb-5">
+                <div class="flex items-center gap-3">
+                    <button onclick="changeLevel(-1)" class="hover:text-white transition">⏮️</button>
+                    <span class="bg-amber-900/40 px-3 py-1 rounded-full">લેવલ <span id="level-num">1</span></span>
+                    <button id="next-lock-btn" onclick="changeLevel(1)" class="opacity-30 cursor-not-allowed">⏭️</button>
                 </div>
-                <span id="total-count-text">Quest: 1/--</span>
+                <span id="q-total-count" class="opacity-50 tracking-widest">QUEST: 1/400</span>
             </div>
             <div class="bow-track">
                 <div id="bow-arrow">🏹</div>
             </div>
-            <div id="status-dots" class="flex justify-center mt-6"></div>
+            <div id="dots-container" class="flex justify-center mt-6 gap-1"></div>
         </div>
 
-        <!-- Main Card -->
-        <div id="game-card" class="glass p-8 md:p-12 rounded-[2.5rem] relative min-h-[450px]">
+        <!-- Dynamic Content Card -->
+        <div id="main-card" class="glass p-8 md:p-12 rounded-[3rem] relative min-h-[500px] flex flex-col">
+            
             <!-- Quiz UI -->
-            <div id="quiz-ui">
-                <div class="flex justify-between items-center mb-8 text-[10px] font-black text-amber-500/50 uppercase">
-                    <span id="q-counter">Quest: 1/10</span>
-                    <span id="score-display">Score: 000</span>
+            <div id="quiz-ui" class="flex-1">
+                <div class="flex justify-between items-center mb-8 text-[10px] font-black text-amber-500/40 uppercase">
+                    <span>Quest: <span id="q-curr">1</span>/10</span>
+                    <span>Score: <span id="score-val">0</span></span>
                 </div>
-                <h2 id="q-text" class="text-2xl md:text-3xl font-bold mb-10 leading-relaxed min-h-[120px]">લોડ થઈ રહ્યું છે...</h2>
-                <div id="options-grid" class="grid grid-cols-1 gap-4 mb-8"></div>
-                <button onclick="skipQuestion()" class="w-full py-2 text-[10px] font-bold text-amber-200/30 uppercase hover:text-amber-200 transition">Skip Question</button>
-                <div id="feedback" class="hidden mt-8 animate-pulse">
-                    <div class="p-6 bg-black/40 border-l-4 border-amber-600 rounded-2xl mb-6 text-sm italic" id="exp-text"></div>
-                    <button onclick="handleNext()" class="w-full py-4 bg-amber-600 rounded-2xl font-black text-xl text-black">આગળ વધો ➔</button>
+                <h2 id="q-text" class="text-2xl md:text-3xl font-bold mb-10 leading-tight min-h-[140px]"></h2>
+                <div id="options-box" class="grid grid-cols-1 gap-4 mb-8"></div>
+                
+                <div id="feedback-box" class="hidden animate-in fade-in duration-500">
+                    <div class="p-5 bg-amber-900/20 border-l-4 border-amber-500 rounded-xl mb-6 text-sm italic leading-relaxed" id="explanation"></div>
+                    <button onclick="nextQuestion()" class="w-full py-5 bg-amber-600 rounded-2xl font-black text-xl text-black shadow-xl hover:bg-amber-500 transition">આગળ વધો ➔</button>
                 </div>
             </div>
 
-            <!-- Result UI -->
-            <div id="result-ui" class="hidden text-center py-6">
-                <div id="gift-icon" class="text-7xl mb-6">🔱</div>
-                <h2 class="text-3xl font-black text-amber-500 mb-2 uppercase">લેવલ પૂર્ણ!</h2>
-                <p id="gift-text" class="text-amber-200/60 mb-8 italic"></p>
-                <div class="grid grid-cols-3 gap-3 mb-10">
-                    <div class="bg-black/40 p-4 border border-green-900/40 rounded-xl">
-                        <p class="text-[9px] uppercase">Sacha</p>
-                        <p id="sacha-count" class="text-xl font-bold text-green-500">0</p>
-                    </div>
-                    <div class="bg-black/40 p-4 border border-red-900/40 rounded-xl">
-                        <p class="text-[9px] uppercase">Khota</p>
-                        <p id="khota-count" class="text-xl font-bold text-red-500">0</p>
-                    </div>
-                    <div class="bg-black/40 p-4 border border-white/10 rounded-xl">
-                        <p class="text-[9px] uppercase">Skip</p>
-                        <p id="skip-count" class="text-xl font-bold">0</p>
-                    </div>
+            <!-- Level Summary UI -->
+            <div id="summary-ui" class="hidden text-center py-4">
+                <div id="reward-icon" class="text-8xl mb-4 drop-shadow-[0_0_15px_rgba(245,158,11,0.8)]">🔱</div>
+                <h2 class="text-3xl font-black text-amber-500 mb-2 uppercase">વિજય ભવ!</h2>
+                <p id="reward-msg" class="text-amber-100/70 mb-8 italic"></p>
+                
+                <div class="overflow-x-auto mb-8 rounded-2xl border border-amber-900/50">
+                    <table class="w-full text-[11px] text-left">
+                        <thead class="bg-amber-900/40 text-amber-500 uppercase">
+                            <tr>
+                                <th class="p-3">પ્રશ્ન</th>
+                                <th class="p-3">પરિણામ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="summary-table-body" class="bg-black/20"></tbody>
+                    </table>
                 </div>
-                <div class="space-y-3">
-                    <button onclick="copyScoreImage()" class="w-full py-4 bg-green-700 rounded-xl font-bold text-white flex items-center justify-center gap-2">
-                        📋 Score Image Copy (Clipboard)
+
+                <div class="grid grid-cols-2 gap-3 mb-8">
+                    <button onclick="shareLevelResult()" class="py-4 bg-green-700 rounded-xl font-bold text-white flex items-center justify-center gap-2 hover:bg-green-600 transition">
+                        📲 ડાયરેક્ટ શેર કરો
                     </button>
-                    <button onclick="nextLevel()" class="w-full py-5 bg-amber-600 rounded-2xl font-black text-xl text-black">Next Level ⏭️</button>
+                    <button onclick="nextLevelStart()" class="py-4 bg-amber-600 rounded-xl font-bold text-black hover:bg-amber-500 transition">
+                        બીજું લેવલ ⏭️
+                    </button>
                 </div>
             </div>
 
-            <!-- Stats/Inventory UI -->
-            <div id="utility-ui" class="hidden">
-                <div class="flex justify-between items-center mb-6 border-b border-amber-900 pb-4">
-                    <h2 id="utility-title" class="text-xl font-black text-amber-500 uppercase italic">Stats</h2>
-                    <button onclick="render()" class="text-[10px] font-bold border border-amber-600 px-3 py-1 rounded-full">Close</button>
+            <!-- Stats & Inventory (Combined View) -->
+            <div id="overlay-ui" class="hidden">
+                <div class="flex justify-between items-center mb-8 border-b border-amber-900 pb-4">
+                    <h2 id="overlay-title" class="text-2xl font-black text-amber-500 uppercase italic">Stats</h2>
+                    <button onclick="closeOverlay()" class="text-2xl">✕</button>
                 </div>
-                <div id="utility-content" class="max-h-[350px] overflow-y-auto custom-scroll pr-2"></div>
+                <div id="overlay-content" class="max-h-[400px] overflow-y-auto custom-scroll pr-3"></div>
             </div>
+
         </div>
     </main>
 
-    <footer class="mt-auto py-10 text-center">
-        <div class="inline-flex items-center gap-3 px-6 py-2 bg-black/40 rounded-full border border-amber-900/30">
-            <div class="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div>
-            <span class="text-[10px] font-bold text-amber-200/40 uppercase tracking-widest">
-                Warriors Joined: <span id="visitor-count">1,502</span>
-            </span>
-        </div>
+    <footer class="mt-auto py-8 text-center opacity-40">
+        <p class="text-[10px] uppercase tracking-[0.3em]">Total Warriors: <span id="v-count">2,419</span></p>
     </footer>
 
     <script>
+        // --- Game State ---
         let state = {
             user: localStorage.getItem('mb_user') || '',
             lang: localStorage.getItem('mb_lang') || 'gu',
-            level: parseInt(localStorage.getItem('mb_lvl')) || 1,
-            maxLevel: parseInt(localStorage.getItem('mb_max_lvl')) || 1,
+            lvl: parseInt(localStorage.getItem('mb_lvl')) || 1,
+            maxLvl: parseInt(localStorage.getItem('mb_max_lvl')) || 1,
             qIdx: 0,
             score: parseInt(localStorage.getItem('mb_score')) || 0,
             db: [],
-            results: [],
+            lvlResults: [], // Results for CURRENT level
+            history: JSON.parse(localStorage.getItem('mb_history')) || {}, // All levels data
+            rewards: JSON.parse(localStorage.getItem('mb_rewards')) || [],
             isMuted: false,
-            answered: false,
-            weapons: JSON.parse(localStorage.getItem('mb_weapons')) || [],
-            allStats: JSON.parse(localStorage.getItem('mb_all_stats')) || { totalSacha: 0, totalKhota: 0, levelsPassed: 0 }
+            busy: false
         };
 
-        const weaponsPool = [
-            { n: "ગાંડીવ ધનુષ", i: "🏹", d: "અર્જુનનું દિવ્ય ધનુષ" },
-            { n: "સુદર્શન ચક્ર", i: "💿", d: "શ્રીકૃષ્ણનું અમોઘ શસ્ત્ર" },
-            { n: "કૌમોદકી ગદા", i: "🔨", d: "ભીમની ગદા" },
-            { n: "વિજય ધનુષ", i: "🏹", d: "કર્ણનું ધનુષ" },
-            { n: "પશુપતાસ્ત્ર", i: "🔱", d: "મહાદેવનું અસ્ત્ર" }
+        const rewardsPool = [
+            { n: "ગાંડીવ ધનુષ", i: "🏹", t: "weapon" },
+            { n: "સુદર્શન ચક્ર", i: "💿", t: "weapon" },
+            { n: "કૌમોદકી ગદા", i: "🔨", t: "weapon" },
+            { n: "પશુપતાસ્ત્ર", i: "🔱", t: "weapon" },
+            { n: "ઉચ્ચૈઃશ્રવા અશ્વ", i: "🐎", t: "horse" },
+            { n: "નંદિઘોષ રથ", i: "🏎️", t: "chariot" },
+            { n: "વિજય ધનુષ", i: "🏹", t: "weapon" },
+            { n: "બ્રહ્માસ્ત્ર", i: "🔥", t: "weapon" }
         ];
 
         async function init() {
@@ -176,263 +175,259 @@
                 document.getElementById('popup').classList.remove('hidden');
             } else {
                 document.getElementById('player-display').innerText = `Warrior: ${state.user}`;
-                await loadDB();
-                render();
+                await loadQuestions();
+                renderQuiz();
             }
         }
 
-        async function loadDB() {
+        async function loadQuestions() {
             try {
                 const res = await fetch(`que_${state.lang}.json`);
                 state.db = await res.json();
             } catch(e) {
+                // Mock fallback
                 state.db = Array.from({length: 400}, (_, i) => ({
-                    q: `પ્રશ્ન ${i+1}: મહાભારત વિશેની આ વિગત શું છે?`,
-                    options: ["ઓપ્શન ૧", "ઓપ્શન ૨", "ઓપ્શન ૩", "ઓપ્શન ૪"],
+                    q: `(${state.lang}) મહાભારત પ્રશ્ન ${i+1}?`,
+                    options: ["ઓપ્શન A", "ઓપ્શન B", "ઓપ્શન C", "ઓપ્શન D"],
                     correct: 0,
-                    exp: "આ પ્રશ્નની વિસ્તૃત સમજૂતી અહીં આવશે."
+                    exp: "આ પ્રશ્નની સમજૂતી અહીં આવશે."
                 }));
             }
         }
 
         function startGame() {
-            const name = document.getElementById('username-input').value.trim();
-            if(!name) return;
-            state.user = name;
-            localStorage.setItem('mb_user', name);
+            const n = document.getElementById('username-input').value.trim();
+            if(!n) return;
+            state.user = n;
+            localStorage.setItem('mb_user', n);
             document.getElementById('popup').classList.add('hidden');
-            document.getElementById('player-display').innerText = `Warrior: ${name}`;
-            loadDB().then(render);
+            document.getElementById('player-display').innerText = `Warrior: ${n}`;
+            loadQuestions().then(renderQuiz);
         }
 
-        function toggleLang() {
-            state.lang = state.lang === 'gu' ? 'en' : 'gu';
-            localStorage.setItem('mb_lang', state.lang);
-            loadDB().then(() => { state.qIdx = 0; render(); });
-        }
-
-        function render() {
-            state.answered = false;
-            const absIdx = ((state.level - 1) * 10) + state.qIdx;
+        function renderQuiz() {
+            state.busy = false;
+            const absIdx = ((state.lvl - 1) * 10) + state.qIdx;
             const q = state.db[absIdx];
 
-            document.getElementById('level-num').innerText = state.level;
-            document.getElementById('total-count-text').innerText = `Quest: ${absIdx + 1}/${state.db.length}`;
-            document.getElementById('q-counter').innerText = `Quest: ${state.qIdx + 1}/10`;
-            document.getElementById('score-display').innerText = `Score: ${state.score.toString().padStart(3, '0')}`;
+            // UI Updates
+            document.getElementById('level-num').innerText = state.lvl;
+            document.getElementById('q-total-count').innerText = `QUEST: ${absIdx + 1}/${state.db.length}`;
+            document.getElementById('q-curr').innerText = state.qIdx + 1;
+            document.getElementById('score-val').innerText = state.score;
             document.getElementById('q-text').innerText = q.q;
 
-            const grid = document.getElementById('options-grid');
-            grid.innerHTML = '';
+            const box = document.getElementById('options-box');
+            box.innerHTML = '';
             q.options.forEach((opt, i) => {
                 const btn = document.createElement('button');
-                btn.className = 'option-btn p-4 rounded-xl font-bold flex items-center gap-3 text-sm';
-                btn.innerHTML = `<span class="opacity-20 text-xs">${i+1}.</span> ${opt}`;
-                btn.onclick = () => checkAnswer(i, btn);
-                grid.appendChild(btn);
+                btn.className = 'option-btn p-4 rounded-2xl font-bold flex items-center gap-4';
+                btn.innerHTML = `<span class="bg-amber-900/50 w-8 h-8 rounded-lg flex items-center justify-center text-xs text-amber-500">${i+1}</span> ${opt}`;
+                btn.onclick = () => handleAnswer(i, btn);
+                box.appendChild(btn);
             });
 
             document.getElementById('quiz-ui').classList.remove('hidden');
-            document.getElementById('result-ui').classList.add('hidden');
-            document.getElementById('utility-ui').classList.add('hidden');
-            document.getElementById('feedback').classList.add('hidden');
-            grid.classList.remove('pointer-events-none');
-            
-            updateVisuals();
-            speakSequence(q.q, q.options);
-            checkLevelJump();
+            document.getElementById('summary-ui').classList.add('hidden');
+            document.getElementById('overlay-ui').classList.add('hidden');
+            document.getElementById('feedback-box').classList.add('hidden');
+            box.classList.remove('pointer-events-none');
+
+            updateProgress();
+            speakQAndA(q);
+            updateNavButtons();
         }
 
-        function updateVisuals() {
+        function handleAnswer(idx, btn) {
+            if(state.busy) return;
+            state.busy = true;
+            window.speechSynthesis.cancel();
+
+            const absIdx = ((state.lvl - 1) * 10) + state.qIdx;
+            const q = state.db[absIdx];
+            const isRight = idx === q.correct;
+
+            document.getElementById('options-box').classList.add('pointer-events-none');
+            
+            if(isRight) {
+                btn.classList.add('bg-green-900/60', 'border-green-500', 'shadow-[0_0_15px_rgba(34,197,94,0.3)]');
+                state.score += 100;
+                state.lvlResults[state.qIdx] = { q: q.q, status: '✅ Correct' };
+            } else {
+                btn.classList.add('bg-red-900/60', 'border-red-500');
+                document.getElementById('options-box').children[q.correct].classList.add('bg-green-900/60', 'border-green-400');
+                state.lvlResults[state.qIdx] = { q: q.q, status: '❌ Wrong' };
+            }
+
+            document.getElementById('explanation').innerText = q.exp;
+            document.getElementById('feedback-box').classList.remove('hidden');
+            saveProgress();
+        }
+
+        function nextQuestion() {
+            state.qIdx++;
+            if(state.qIdx >= 10) finishLevel();
+            else renderQuiz();
+        }
+
+        function finishLevel() {
+            document.getElementById('quiz-ui').classList.add('hidden');
+            document.getElementById('summary-ui').classList.remove('hidden');
+
+            // Save Level to History
+            state.history[state.lvl] = [...state.lvlResults];
+            
+            // Reward logic
+            const reward = rewardsPool[Math.floor(Math.random() * rewardsPool.length)];
+            state.rewards.push({...reward, lvl: state.lvl});
+            
+            if(state.lvl >= state.maxLvl) state.maxLvl = state.lvl + 1;
+
+            document.getElementById('reward-icon').innerText = reward.i;
+            document.getElementById('reward-msg').innerText = `અદભુત! તમે લેવલ ${state.lvl} જીત્યું છે. ભેટમાં તમને '${reward.n}' પ્રાપ્ત થયું છે.`;
+
+            // Table Summary
+            const tbody = document.getElementById('summary-table-body');
+            tbody.innerHTML = '';
+            state.lvlResults.forEach(r => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-amber-900/20";
+                tr.innerHTML = `<td class="p-3 opacity-70">${r.q.substring(0, 40)}...</td><td class="p-3 font-bold ${r.status.includes('✅') ? 'text-green-500':'text-red-500'}">${r.status}</td>`;
+                tbody.appendChild(tr);
+            });
+
+            saveProgress();
+        }
+
+        function nextLevelStart() {
+            state.lvl++;
+            state.qIdx = 0;
+            state.lvlResults = [];
+            renderQuiz();
+        }
+
+        function changeLevel(dir) {
+            const target = state.lvl + dir;
+            if(target < 1 || target > state.maxLvl) return;
+            state.lvl = target;
+            state.qIdx = 0;
+            state.lvlResults = [];
+            renderQuiz();
+        }
+
+        function updateProgress() {
             const perc = (state.qIdx / 10) * 100;
             document.getElementById('bow-arrow').style.left = `calc(${perc}% - 12px)`;
-            const dots = document.getElementById('status-dots');
+            
+            const dots = document.getElementById('dots-container');
             dots.innerHTML = '';
-            for(let i=0; i<10; i++) {
-                const d = document.createElement('span');
-                d.className = 'dot';
-                if(state.results[i]) {
-                    if(state.results[i].status === 'correct') d.classList.add('dot-correct');
-                    else if(state.results[i].status === 'wrong') d.classList.add('dot-wrong');
-                }
-                dots.appendChild(d);
+            for(let i=0; i<10; i++){
+                const dot = document.createElement('div');
+                dot.className = `h-1.5 w-6 rounded-full ${state.lvlResults[i] ? (state.lvlResults[i].status.includes('✅') ? 'bg-green-500':'bg-red-500') : 'bg-white/10'}`;
+                dots.appendChild(dot);
             }
         }
 
-        function checkAnswer(idx, btn) {
-            if(state.answered) return;
-            state.answered = true;
-            window.speechSynthesis.cancel();
-            const absIdx = ((state.level - 1) * 10) + state.qIdx;
-            const q = state.db[absIdx];
-            const isCorrect = idx === q.correct;
-
-            document.getElementById('options-grid').classList.add('pointer-events-none');
-            if(isCorrect) {
-                btn.classList.add('bg-green-900', 'border-green-500');
-                state.score += 100;
-                state.allStats.totalSacha++;
-                state.results[state.qIdx] = { status: 'correct' };
-            } else {
-                btn.classList.add('bg-red-900', 'border-red-500');
-                document.getElementById('options-grid').children[q.correct].classList.add('bg-green-900', 'border-green-500');
-                state.allStats.totalKhota++;
-                state.results[state.qIdx] = { status: 'wrong' };
-            }
-
-            document.getElementById('exp-text').innerText = q.exp;
-            document.getElementById('feedback').classList.remove('hidden');
-            updateVisuals();
-            saveState();
-        }
-
-        function skipQuestion() {
-            if(state.answered) return;
-            state.results[state.qIdx] = { status: 'skip' };
-            handleNext();
-        }
-
-        function handleNext() {
-            state.qIdx++;
-            if(state.qIdx >= 10) showLevelResult();
-            else render();
-        }
-
-        function showLevelResult() {
-            document.getElementById('quiz-ui').classList.add('hidden');
-            document.getElementById('result-ui').classList.remove('hidden');
+        async function shareLevelResult() {
+            const area = document.getElementById('capture-zone');
+            document.getElementById('cap-user').innerText = `Warrior: ${state.user}`;
+            document.getElementById('cap-lvl').innerText = state.lvl;
+            document.getElementById('cap-score').innerText = state.score;
             
-            const weapon = weaponsPool[Math.floor(Math.random() * weaponsPool.length)];
-            state.weapons.push({ ...weapon, lvl: state.level });
-            if(state.level >= state.maxLevel) {
-                state.maxLevel = state.level + 1;
-                state.allStats.levelsPassed++;
-            }
-
-            document.getElementById('gift-icon').innerText = weapon.i;
-            document.getElementById('gift-text').innerText = `અભિનંદન યોદ્ધા ${state.user}! તમે લેવલ ${state.level} પાસ કર્યું અને તમને '${weapon.n}' મળ્યું.`;
-            document.getElementById('sacha-count').innerText = state.results.filter(r => r.status === 'correct').length;
-            document.getElementById('khota-count').innerText = state.results.filter(r => r.status === 'wrong').length;
-            document.getElementById('skip-count').innerText = state.results.filter(r => r.status === 'skip').length;
-            saveState();
-        }
-
-        function nextLevel() {
-            state.level++;
-            state.qIdx = 0;
-            state.results = [];
-            render();
-        }
-
-        function prevLevel() {
-            if(state.level <= 1) return;
-            state.level--;
-            state.qIdx = 0;
-            state.results = [];
-            render();
-        }
-
-        function jumpNextLevel() {
-            if(state.level < state.maxLevel) {
-                state.level++;
-                state.qIdx = 0;
-                state.results = [];
-                render();
-            }
-        }
-
-        function checkLevelJump() {
-            const btn = document.getElementById('next-lvl-jump');
-            if(state.level < state.maxLevel) btn.classList.remove('hidden');
-            else btn.classList.add('hidden');
-        }
-
-        function showInventory() {
-            document.getElementById('quiz-ui').classList.add('hidden');
-            document.getElementById('result-ui').classList.add('hidden');
-            const util = document.getElementById('utility-ui');
-            util.classList.remove('hidden');
-            document.getElementById('utility-title').innerText = "My Weapons (શસ્ત્રો)";
-            
-            const cont = document.getElementById('utility-content');
-            cont.innerHTML = '';
-            state.weapons.forEach(w => {
-                const d = document.createElement('div');
-                d.className = 'bg-black/40 p-4 border border-amber-900 rounded-xl mb-3 flex items-center gap-4';
-                d.innerHTML = `<div class="text-3xl">${w.i}</div><div><p class="font-bold text-amber-500">${w.n}</p><p class="text-[9px] opacity-40 uppercase">LEVEL ${w.lvl}</p></div>`;
-                cont.appendChild(d);
-            });
-        }
-
-        function showGlobalStats() {
-            document.getElementById('quiz-ui').classList.add('hidden');
-            document.getElementById('result-ui').classList.add('hidden');
-            const util = document.getElementById('utility-ui');
-            util.classList.remove('hidden');
-            document.getElementById('utility-title').innerText = "Battle Stats (કુલ પ્રગતિ)";
-            
-            const cont = document.getElementById('utility-content');
-            cont.innerHTML = `
-                <div class="space-y-4">
-                    <div class="p-6 bg-amber-900/20 rounded-2xl border border-amber-800 text-center">
-                        <p class="text-xs uppercase opacity-60">Total Levels Passed</p>
-                        <p class="text-4xl font-black">${state.allStats.levelsPassed}</p>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="p-4 bg-green-900/20 rounded-xl border border-green-900/40 text-center">
-                            <p class="text-[10px] uppercase opacity-60">Total Sacha</p>
-                            <p class="text-2xl font-bold text-green-500">${state.allStats.totalSacha}</p>
-                        </div>
-                        <div class="p-4 bg-red-900/20 rounded-xl border border-red-900/40 text-center">
-                            <p class="text-[10px] uppercase opacity-60">Total Khota</p>
-                            <p class="text-2xl font-bold text-red-500">${state.allStats.totalKhota}</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function speakSequence(qText, options) {
-            if(state.isMuted) return;
-            window.speechSynthesis.cancel();
-            const langCode = state.lang === 'gu' ? 'gu-IN' : 'en-US';
-            
-            const qUtter = new SpeechSynthesisUtterance(qText);
-            qUtter.lang = langCode;
-            qUtter.rate = 0.95;
-
-            qUtter.onend = () => {
-                options.forEach((opt, idx) => {
-                    setTimeout(() => {
-                        if(state.answered || state.isMuted) return;
-                        const optUtter = new SpeechSynthesisUtterance(`ઓપ્શન ${idx+1}: ${opt}`);
-                        optUtter.lang = langCode;
-                        optUtter.rate = 1.0;
-                        window.speechSynthesis.speak(optUtter);
-                    }, idx * 1500);
-                });
-            };
-            window.speechSynthesis.speak(qUtter);
-        }
-
-        async function copyScoreImage() {
-            const area = document.getElementById('share-canvas-area');
-            document.getElementById('capture-name').innerText = `Warrior: ${state.user}`;
-            document.getElementById('capture-score').innerText = state.score;
-            document.getElementById('capture-lvl').innerText = state.level;
-            const weapon = state.weapons[state.weapons.length - 1];
-            if(weapon) document.getElementById('capture-gift').innerText = weapon.i;
+            const lastReward = state.rewards[state.rewards.length - 1];
+            document.getElementById('cap-reward-icon').innerText = lastReward.i;
+            document.getElementById('cap-reward-name').innerText = lastReward.n;
 
             const canvas = await html2canvas(area);
             canvas.toBlob(async (blob) => {
-                try {
-                    const data = [new ClipboardItem({ [blob.type]: blob })];
-                    await navigator.clipboard.write(data);
-                    alert("તમારો સ્કોર કાર્ડ ઈમેજ તરીકે કોપી થઈ ગયો છે! હવે તમે વૉટ્સએપ પર પેસ્ટ કરી શકો છો.");
-                } catch (err) {
-                    alert("Clipboard error. Please try again.");
+                const file = new File([blob], 'mahabharat-score.png', { type: 'image/png' });
+                if (navigator.share) {
+                    try {
+                        await navigator.share({
+                            files: [file],
+                            title: 'મહાભારત રણસંગ્રામ રિઝલ્ટ',
+                            text: `મેં લેવલ ${state.lvl} પૂરું કર્યું અને મને ${lastReward.n} મળ્યું! તમે રમી શકશો?`
+                        });
+                    } catch (err) { console.error("Share failed", err); }
+                } else {
+                    alert("તમારું બ્રાઉઝર ડાયરેક્ટ શેર સપોર્ટ નથી કરતું. ઈમેજ કોપી કરો.");
                 }
             });
+        }
+
+        function showInventory() {
+            openOverlay("મારા દિવ્ય અસ્ત્રો અને ભેટ");
+            const cont = document.getElementById('overlay-content');
+            cont.innerHTML = state.rewards.length ? '' : '<p class="text-center py-20 opacity-30 italic">હજુ કોઈ ભેટ મળી નથી...</p>';
+            
+            state.rewards.forEach(r => {
+                const div = document.createElement('div');
+                div.className = "bg-amber-900/20 p-5 rounded-2xl mb-4 border border-amber-800/50 flex items-center gap-5 reward-card";
+                div.innerHTML = `<div class="text-5xl">${r.i}</div><div><h3 class="font-black text-amber-500 text-xl">${r.n}</h3><p class="text-[10px] uppercase opacity-40 italic">લેવલ ${r.lvl} પર પ્રાપ્ત</p></div>`;
+                cont.appendChild(div);
+            });
+        }
+
+        function showStats() {
+            openOverlay("યુદ્ધ આંકડા (Level Wise)");
+            const cont = document.getElementById('overlay-content');
+            cont.innerHTML = '';
+            
+            for(let l=1; l < state.maxLvl; l++) {
+                const res = state.history[l] || [];
+                const correct = res.filter(r => r.status.includes('✅')).length;
+                
+                const div = document.createElement('div');
+                div.className = "bg-black/40 p-5 rounded-2xl mb-3 border border-amber-900/30 cursor-pointer hover:border-amber-500 transition";
+                div.innerHTML = `
+                    <div class="flex justify-between items-center" onclick="toggleLevelDetail(${l})">
+                        <div>
+                            <span class="font-bold text-lg">લેવલ ${l}</span>
+                            <p class="text-[10px] opacity-50 uppercase">${correct}/10 સાચા જવાબ</p>
+                        </div>
+                        <div class="text-amber-500">વિગત ➔</div>
+                    </div>
+                    <div id="lvl-detail-${l}" class="hidden mt-4 pt-4 border-t border-amber-900/20 text-[11px] space-y-2">
+                        ${res.map((r, i) => `<div class="flex gap-2"><span class="${r.status.includes('✅')?'text-green-500':'text-red-500'}">${r.status.split(' ')[0]}</span> <span class="opacity-70">${i+1}. ${r.q.substring(0, 50)}...</span></div>`).join('')}
+                    </div>
+                `;
+                cont.appendChild(div);
+            }
+        }
+
+        function toggleLevelDetail(id) {
+            const el = document.getElementById(`lvl-detail-${id}`);
+            el.classList.toggle('hidden');
+        }
+
+        function openOverlay(title) {
+            document.getElementById('overlay-title').innerText = title;
+            document.getElementById('overlay-ui').classList.remove('hidden');
+            document.getElementById('quiz-ui').classList.add('hidden');
+            document.getElementById('summary-ui').classList.add('hidden');
+        }
+
+        function closeOverlay() { renderQuiz(); }
+
+        function speakQAndA(q) {
+            if(state.isMuted) return;
+            window.speechSynthesis.cancel();
+            const lang = state.lang === 'gu' ? 'gu-IN' : 'en-US';
+            
+            const utterQ = new SpeechSynthesisUtterance(q.q);
+            utterQ.lang = lang;
+            utterQ.onend = () => {
+                if(state.busy) return;
+                q.options.forEach((opt, i) => {
+                    setTimeout(() => {
+                        if(state.busy || state.isMuted) return;
+                        const utterO = new SpeechSynthesisUtterance(`ઓપ્શન ${i+1}: ${opt}`);
+                        utterO.lang = lang;
+                        window.speechSynthesis.speak(utterO);
+                    }, i * 1600);
+                });
+            };
+            window.speechSynthesis.speak(utterQ);
         }
 
         function toggleAudio() {
@@ -441,12 +436,28 @@
             if(state.isMuted) window.speechSynthesis.cancel();
         }
 
-        function saveState() {
-            localStorage.setItem('mb_lvl', state.level);
-            localStorage.setItem('mb_max_lvl', state.maxLevel);
+        function toggleLang() {
+            state.lang = state.lang === 'gu' ? 'en' : 'gu';
+            localStorage.setItem('mb_lang', state.lang);
+            loadQuestions().then(renderQuiz);
+        }
+
+        function updateNavButtons() {
+            const btn = document.getElementById('next-lock-btn');
+            if(state.lvl < state.maxLvl) {
+                btn.classList.remove('opacity-30', 'cursor-not-allowed');
+                btn.classList.add('hover:text-white');
+            } else {
+                btn.classList.add('opacity-30', 'cursor-not-allowed');
+            }
+        }
+
+        function saveProgress() {
+            localStorage.setItem('mb_lvl', state.lvl);
+            localStorage.setItem('mb_max_lvl', state.maxLvl);
             localStorage.setItem('mb_score', state.score);
-            localStorage.setItem('mb_weapons', JSON.stringify(state.weapons));
-            localStorage.setItem('mb_all_stats', JSON.stringify(state.allStats));
+            localStorage.setItem('mb_history', JSON.stringify(state.history));
+            localStorage.setItem('mb_rewards', JSON.stringify(state.rewards));
         }
 
         window.onload = init;
