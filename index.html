@@ -59,7 +59,7 @@
             <button onclick="toggleAudio()" id="audio-btn" class="bg-amber-900/30 p-2 rounded-xl border border-amber-800">🔊</button>
             <button onclick="showInventory()" class="bg-amber-900/30 px-3 py-1 rounded-xl border border-amber-800 text-[10px] font-black uppercase">🎒 ભાથો</button>
             <button onclick="showStats()" class="bg-amber-900/30 px-3 py-1 rounded-xl border border-amber-800 text-[10px] font-black uppercase">📊 આંકડા</button>
-            <button onclick="toggleLang()" class="bg-amber-700 px-3 py-1 rounded text-[10px] font-bold">GU/EN</button>
+           <!-- <button onclick="toggleLang()" class="bg-amber-700 px-3 py-1 rounded text-[10px] font-bold">GU/EN</button> -->
         </div>
     </header>
 
@@ -139,7 +139,7 @@
     </main>
 
     <footer class="mt-auto py-8 text-center opacity-40">
-        <p class="text-[10px] uppercase tracking-[0.3em]">Total Warriors: <span id="v-count">2,419</span></p>
+        <p class="text-[10px] uppercase tracking-[0.3em]">Total Warriors: <div id="hitCount"></div></p>
     </footer>
 
     <script>
@@ -461,7 +461,67 @@
         }
 
         window.onload = init;
+
+
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const TRACKER_BASE = "https://hardipsinh.pythonanywhere.com";
+  const TRACK_URL = `${TRACKER_BASE}/track`;
+  const websiteName = "dharmgyan";
+
+  // Build a minimal payload with just a few useful fields
+  const payload = {
+    website: websiteName,
+    page_url: window.location.href,     // full current URL
+    referrer: document.referrer || "",  // where the user came from
+    user_agent: navigator.userAgent || "" // optional: browser UA
+    // If you want one more: pathname
+    // pathname: window.location.pathname
+  };
+
+  // Timeout controller (optional)
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 5000);
+
+  try {
+    const res = await fetch(TRACK_URL, {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept-Language": navigator.language || "en",
+        // "X-Tracker-Secret": "your-shared-secret", // if you enforce a server-side secret
+      },
+      body: JSON.stringify(payload),
+      signal: controller.signal,
+      cache: "no-store"
+    });
+    clearTimeout(timeout);
+
+    if (!res.ok) {
+      console.error("Track failed:", res.status, res.statusText);
+      return;
+    }
+
+    const data = await res.json();
+    console.log("Tracked:", data.website, "count:", data.count);
+
+    const hitCountEl = document.getElementById("hitCount");
+    if (hitCountEl) hitCountEl.textContent = `Hits: ${data.count}`;
+  } catch (err) {
+    clearTimeout(timeout);
+    console.error("Error calling tracker:", err);
+  }
+});
+
+
+        
     </script>
+
+
+
+
+    
 </body>
 </html>
 
