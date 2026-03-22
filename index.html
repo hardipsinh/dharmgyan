@@ -3,286 +3,312 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mahabharat War 1000 Quests</title>
+    <title>મહાભારત રણસંગ્રામ - લેવલ વાઇઝ</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Hind+Vadodara:wght@400;700&family=Metamorphous&display=swap');
-        
-        body {
-            font-family: 'Hind Vadodara', sans-serif;
-            background: radial-gradient(circle, #2a0505, #000);
-            color: #fef3c7;
-            min-height: 100vh;
-            overflow-x: hidden;
-            margin: 0;
-            user-select: none;
-        }
-
-        .war-asset {
-            position: fixed;
-            font-size: 3.5rem;
-            pointer-events: none;
-            z-index: 0;
-            opacity: 0.15;
-            transition: transform 2s ease-in-out, opacity 1s;
-        }
-
-        .glass-panel {
-            background: rgba(30, 5, 5, 0.95);
-            backdrop-filter: blur(15px);
-            border: 2px solid #b45309;
-            box-shadow: 0 0 40px rgba(180, 83, 9, 0.5);
-            border-radius: 40px;
-        }
-
-        .bow-container {
-            position: relative;
-            height: 60px;
-            background: rgba(0,0,0,0.4);
-            border: 2px solid #b45309;
-            border-radius: 30px;
-            overflow: hidden;
-        }
-
-        #bow-arrow {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%) rotate(45deg);
-            font-size: 32px;
-            transition: left 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .option-box {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid #78350f;
-            transition: 0.3s;
-            cursor: pointer;
-        }
-
-        .option-box:hover {
-            background: rgba(180, 83, 9, 0.2);
-            border-color: #f59e0b;
-            transform: scale(1.03);
-        }
-
-        .correct { background: #064e3b !important; border-color: #10b981 !important; box-shadow: 0 0 15px #10b981; }
-        .wrong { background: #7f1d1d !important; border-color: #ef4444 !important; box-shadow: 0 0 15px #ef4444; }
+        @import url('https://fonts.googleapis.com/css2?family=Hind+Vadodara:wght@400;700&display=swap');
+        body { font-family: 'Hind Vadodara', sans-serif; background: #1a0a0a; color: #fce7bc; overflow-x: hidden; }
+        .glass { background: rgba(45, 10, 10, 0.95); border: 2px solid #b45309; box-shadow: 0 0 30px rgba(180, 83, 9, 0.5); }
+        .dot { height: 12px; width: 12px; border-radius: 50%; display: inline-block; border: 1px solid #444; background: #fff; margin: 0 4px; }
+        .dot-correct { background: #10b981 !important; }
+        .dot-wrong { background: #ef4444 !important; }
+        .dot-skip { background: #fff !important; }
+        .option-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid #78350f; transition: 0.3s; cursor: pointer; }
+        .option-btn:hover { background: #451a03; border-color: #f59e0b; }
+        .war-asset { position: fixed; font-size: 3rem; pointer-events: none; z-index: 0; opacity: 0.1; transition: 2s; }
+        #popup { z-index: 100; background: rgba(0,0,0,0.9); }
     </style>
 </head>
-<body class="flex flex-col items-center p-4">
+<body class="min-h-screen flex flex-col items-center p-4">
 
-    <!-- War Elements -->
-    <div id="war-field"></div>
-
-    <header class="w-full max-w-4xl flex justify-between items-center mb-8 z-10 p-2">
-        <div>
-            <h1 class="text-3xl font-black text-amber-500 italic uppercase leading-none">Mahabharat</h1>
-            <p class="text-[9px] tracking-[0.4em] text-amber-200/40 font-bold uppercase">Hardipsinh Jadeja Present</p>
-        </div>
-        <div class="flex gap-3">
-            <button onclick="changeLang()" class="border border-amber-600 px-4 py-2 rounded-xl text-xs font-black bg-amber-900/50">GU / EN</button>
-            <button onclick="toggleAudio()" id="audio-btn" class="border border-amber-600 px-4 py-2 rounded-xl text-xs bg-amber-900/50">🔊</button>
-        </div>
-    </header>
-
-    <!-- Progress Bar -->
-    <div class="w-full max-w-2xl mb-12 z-10">
-        <div class="bow-container shadow-2xl">
-            <div id="bow-arrow" style="left: 0%">🏹</div>
-            <div class="absolute inset-0 flex justify-between items-center px-8 opacity-20 text-[10px] font-black uppercase tracking-widest pointer-events-none">
-                <span>કૌરવ સેના</span>
-                <span>પાંડવ વિજય</span>
-            </div>
+    <!-- Start Popup -->
+    <div id="popup" class="fixed inset-0 flex items-center justify-center p-6 hidden">
+        <div class="glass p-8 rounded-3xl max-w-md w-full text-center">
+            <h2 class="text-3xl font-black mb-6 text-amber-500 uppercase">નમસ્તે યોદ્ધા!</h2>
+            <p class="mb-6 opacity-70">રણભૂમિમાં ઉતરતા પહેલા તમારું નામ જણાવો:</p>
+            <input type="text" id="username-input" class="w-full p-4 bg-black border border-amber-600 rounded-xl mb-6 text-center text-xl text-white outline-none">
+            <button onclick="startGame()" class="w-full py-4 bg-amber-600 rounded-xl font-bold text-black text-xl hover:bg-amber-500">પ્રારંભ કરો</button>
         </div>
     </div>
 
+    <!-- Background Elements -->
+    <div id="war-field"></div>
+
+    <header class="w-full max-w-4xl flex justify-between items-center mb-8 z-10 py-4 border-b border-amber-900">
+        <div>
+            <h1 class="text-2xl font-black text-amber-500 uppercase leading-none">MAHABHARAT</h1>
+            <p id="player-display" class="text-[10px] text-amber-200 mt-1 uppercase font-bold"></p>
+        </div>
+        <div class="flex gap-2">
+            <button onclick="prevLevel()" class="bg-amber-900/50 p-2 rounded text-xs">⏮️ Level</button>
+            <button onclick="nextLevel()" id="skip-btn" class="bg-amber-900/50 p-2 rounded text-xs hidden">Next Level ⏭️</button>
+            <button onclick="toggleLang()" class="bg-amber-700 px-3 py-1 rounded text-xs font-bold">GU/EN</button>
+        </div>
+    </header>
+
     <main class="w-full max-w-2xl z-10">
-        <div class="glass-panel p-8 md:p-14 relative">
-            <div id="game-ui">
-                <div class="flex justify-between items-center mb-8">
-                    <span id="counter" class="text-xs font-black bg-amber-600/10 border border-amber-600/30 px-3 py-1 rounded-full text-amber-500 uppercase">Quest: 1/1000</span>
-                    <span id="score" class="text-2xl font-black text-amber-500">0</span>
+        <!-- Status Bar -->
+        <div class="mb-6 flex flex-col items-center">
+            <div class="text-xs font-bold text-amber-600 mb-2 uppercase tracking-widest">
+                Level <span id="level-num">1</span> Progress
+            </div>
+            <div id="status-dots" class="flex justify-center mb-2">
+                <!-- Dots generated here -->
+            </div>
+        </div>
+
+        <div id="game-card" class="glass p-8 md:p-12 rounded-[2.5rem]">
+            
+            <div id="quiz-ui">
+                <div class="flex justify-between items-center mb-8 text-xs font-bold text-amber-500/50 uppercase">
+                    <span id="q-counter">Quest: 1/10</span>
+                    <span id="score-display">Score: 0</span>
                 </div>
 
-                <h2 id="question" class="text-2xl md:text-3xl font-bold mb-10 leading-snug">લોડ થઈ રહ્યું છે...</h2>
+                <h2 id="q-text" class="text-2xl md:text-3xl font-bold mb-10 leading-relaxed">લોડ થઈ રહ્યું છે...</h2>
 
-                <div id="options" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10"></div>
+                <div id="options-grid" class="grid grid-cols-1 gap-4 mb-8"></div>
 
-                <div id="next-panel" class="hidden">
-                    <div class="p-6 rounded-3xl bg-black/40 border-l-8 border-amber-600 mb-8">
-                        <p id="explanation" class="text-sm italic text-amber-100/90"></p>
-                    </div>
-                    <button onclick="nextQuest()" class="w-full py-6 bg-gradient-to-r from-amber-700 to-amber-900 rounded-3xl font-black text-2xl border-2 border-amber-500 shadow-2xl">
-                        આગળ વધો ➔
-                    </button>
+                <div class="flex gap-2">
+                    <button onclick="skipQuestion()" class="flex-1 py-4 border border-amber-900 rounded-xl text-xs font-bold opacity-50 hover:opacity-100 transition">Skip Question</button>
+                </div>
+
+                <div id="feedback" class="hidden mt-8">
+                    <div class="p-6 bg-black/40 border-l-4 border-amber-600 rounded-2xl mb-6 text-sm italic" id="exp-text"></div>
+                    <button onclick="handleNext()" class="w-full py-5 bg-amber-600 rounded-2xl font-black text-xl text-black">આગળ વધો</button>
                 </div>
             </div>
 
-            <div id="victory-ui" class="hidden text-center py-10">
-                <div class="text-9xl mb-8">🚩</div>
-                <h2 class="text-4xl font-black text-amber-500 mb-4 uppercase">વિજયી ભવ!</h2>
-                <div class="grid grid-cols-2 gap-4 mb-10">
-                    <div class="bg-black/30 p-6 rounded-3xl border border-amber-900">
-                        <p id="v-score" class="text-3xl font-black">0</p>
+            <!-- Level Result UI -->
+            <div id="result-ui" class="hidden text-center py-6">
+                <div id="gift-icon" class="text-7xl mb-6 animate-bounce">🎁</div>
+                <h2 class="text-3xl font-black text-amber-500 mb-4">લેવલ પૂર્ણ!</h2>
+                <p id="gift-text" class="text-amber-200 mb-8 italic"></p>
+                
+                <div class="grid grid-cols-3 gap-3 mb-10">
+                    <div class="bg-black/40 p-4 rounded-xl border border-green-900">
+                        <p class="text-[10px] text-green-500 uppercase">Sacha</p>
+                        <p id="sacha-count" class="text-xl font-bold">0</p>
                     </div>
-                    <div class="bg-black/30 p-6 rounded-3xl border border-amber-900">
-                        <p id="v-count" class="text-3xl font-black">0</p>
+                    <div class="bg-black/40 p-4 rounded-xl border border-red-900">
+                        <p class="text-[10px] text-red-500 uppercase">Khota</p>
+                        <p id="khota-count" class="text-xl font-bold">0</p>
+                    </div>
+                    <div class="bg-black/40 p-4 rounded-xl border border-white/20">
+                        <p class="text-[10px] text-gray-400 uppercase">Skip</p>
+                        <p id="skip-count" class="text-xl font-bold">0</p>
                     </div>
                 </div>
-                <button onclick="shareGame()" class="w-full py-6 bg-blue-700 rounded-3xl font-black text-xl mb-4">📲 રિઝલ્ટ શેર કરો</button>
-                <button onclick="location.reload()" class="w-full py-6 bg-amber-700 rounded-3xl font-black text-xl">ફરીથી રમો</button>
+
+                <button onclick="showSummary()" class="w-full py-4 border border-amber-600 rounded-xl mb-4 text-xs font-bold">Score Details Summary</button>
+                <button onclick="nextLevel()" class="w-full py-5 bg-amber-600 rounded-2xl font-black text-xl text-black mb-4">Next Level</button>
+                <button onclick="retryLevel()" class="text-amber-500 underline text-sm">Retry Level</button>
             </div>
         </div>
     </main>
 
     <script>
         let state = {
+            user: localStorage.getItem('mb_user') || '',
             lang: 'gu',
-            idx: parseInt(localStorage.getItem('mb_i')) || 0,
-            score: parseInt(localStorage.getItem('mb_s')) || 0,
+            level: parseInt(localStorage.getItem('mb_lvl')) || 1,
+            qIndex: 0, // index within the level (0-9)
+            score: 0,
+            db: [],
+            results: [], // array of {q, s, status: 'correct'|'wrong'|'skip'}
             answered: false,
-            audioEnabled: true,
-            db: []
+            passedLevels: JSON.parse(localStorage.getItem('mb_passed')) || []
         };
 
-        const icons = ['🐘', '🐎', '🏹', '🔱', '🛡️', '⚔️', '🔥', '🏰', '🚩', '🛕'];
+        const weapons = ["ગાંડીવ ધનુષ", "સુદર્શન ચક્ર", "કૌમોદકી ગદા", "વિજય ધનુષ", "પશુપતાસ્ત્ર", "બ્રહ્માસ્ત્ર", "નંદક ખડગ", "પાંચજન્ય શંખ"];
+        const warIcons = ['🐘', '🐎', '🏹', '🔱', '🛡️', '⚔️', '🚩'];
 
         async function init() {
             setupBG();
-            await loadDB();
-            render();
+            if(!state.user) {
+                document.getElementById('popup').classList.remove('hidden');
+            } else {
+                document.getElementById('player-display').innerText = `Warrior: ${state.user}`;
+                await loadDB();
+                render();
+            }
         }
 
         function setupBG() {
             const field = document.getElementById('war-field');
-            for(let i=0; i<15; i++) {
-                const icon = document.createElement('div');
-                icon.className = 'war-asset';
-                icon.innerText = icons[Math.floor(Math.random() * icons.length)];
-                icon.style.left = Math.random() * 90 + 'vw';
-                icon.style.top = Math.random() * 90 + 'vh';
-                field.appendChild(icon);
+            for(let i=0; i<12; i++) {
+                const el = document.createElement('div');
+                el.className = 'war-asset';
+                el.innerText = warIcons[Math.floor(Math.random()*warIcons.length)];
+                el.style.left = Math.random()*90 + 'vw';
+                el.style.top = Math.random()*90 + 'vh';
+                field.appendChild(el);
             }
         }
 
-        async function loadDB() {
-            try {
-                const res = await fetch(`que_${state.lang}.json`);
-                let data = await res.json();
-                
-                // CRITICAL: Ensure exactly 1000 questions
-                // If the JSON is smaller, we repeat the set but adjust IDs to reach 1000
-                if(data.length < 1000) {
-                    let fullDB = [];
-                    while(fullDB.length < 1000) {
-                        data.forEach(q => {
-                            if(fullDB.length < 1000) {
-                                fullDB.push({...q, id: fullDB.length + 1});
-                            }
-                        });
-                    }
-                    state.db = fullDB;
-                } else {
-                    state.db = data.slice(0, 1000);
-                }
-            } catch (err) {
-                console.error("Files not found. Check que_gu.json and que_en.json");
-            }
-        }
-
-        function changeLang() {
-            state.lang = state.lang === 'gu' ? 'en' : 'gu';
+        function startGame() {
+            const name = document.getElementById('username-input').value.trim();
+            if(!name) return;
+            state.user = name;
+            localStorage.setItem('mb_user', name);
+            document.getElementById('popup').classList.add('hidden');
+            document.getElementById('player-display').innerText = `Warrior: ${name}`;
             loadDB().then(render);
         }
 
-        function toggleAudio() {
-            state.audioEnabled = !state.audioEnabled;
-            document.getElementById('audio-btn').innerText = state.audioEnabled ? '🔊' : '🔇';
-            if(!state.audioEnabled) window.speechSynthesis.cancel();
+        async function loadDB() {
+            const res = await fetch(`que_${state.lang}.json`);
+            let data = await res.json();
+            // Ensure 1000 items (mock loop for safety)
+            while(data.length < 1000) data = data.concat(data);
+            state.db = data.slice(0, 1000);
         }
 
         function render() {
-            if(!state.db.length) return;
             state.answered = false;
-            const q = state.db[state.idx];
-
-            document.querySelectorAll('.war-asset').forEach(el => {
-                el.innerText = icons[Math.floor(Math.random() * icons.length)];
-                el.style.left = Math.random() * 90 + 'vw';
-                el.style.top = Math.random() * 90 + 'vh';
-                el.style.opacity = '0.15';
-            });
-
-            document.getElementById('counter').innerText = `Quest: ${state.idx + 1}/1000`;
-            document.getElementById('score').innerText = state.score;
-            document.getElementById('question').innerText = q.q;
-
-            const optGrid = document.getElementById('options');
-            optGrid.innerHTML = '';
+            const absoluteIdx = ((state.level - 1) * 10) + state.qIndex;
+            const q = state.db[absoluteIdx];
+            
+            document.getElementById('level-num').innerText = state.level;
+            document.getElementById('q-counter').innerText = `Quest: ${state.qIndex + 1}/10; Total: ${absoluteIdx + 1}/1000`;
+            document.getElementById('q-text').innerText = q.q;
+            document.getElementById('score-display').innerText = `Score: ${state.score}`;
+            
+            const grid = document.getElementById('options-grid');
+            grid.innerHTML = '';
             q.options.forEach((opt, i) => {
                 const btn = document.createElement('div');
-                btn.className = 'option-box p-6 rounded-3xl text-lg font-bold flex items-center gap-5';
-                btn.innerHTML = `<span class="bg-amber-600/20 w-8 h-8 flex items-center justify-center rounded-full text-amber-500">${i+1}</span> ${opt}`;
-                btn.onclick = () => handleSelect(i, btn);
-                optGrid.appendChild(btn);
+                btn.className = 'option-btn p-5 rounded-2xl font-bold flex items-center gap-4';
+                btn.innerHTML = `<span class="opacity-30">${i+1}.</span> ${opt}`;
+                btn.onclick = () => check(i, btn);
+                grid.appendChild(btn);
             });
 
-            document.getElementById('next-panel').classList.add('hidden');
-            optGrid.classList.remove('pointer-events-none');
+            document.getElementById('feedback').classList.add('hidden');
+            document.getElementById('quiz-ui').classList.remove('hidden');
+            document.getElementById('result-ui').classList.add('hidden');
+            grid.classList.remove('pointer-events-none');
             
-            updateProgress();
-            if(state.audioEnabled) speak(q.q);
+            updateDots();
+            checkSkipBtn();
         }
 
-        function speak(text) {
-            window.speechSynthesis.cancel();
-            const msg = new SpeechSynthesisUtterance(text);
-            msg.lang = state.lang === 'gu' ? 'gu-IN' : 'en-US';
-            window.speechSynthesis.speak(msg);
+        function updateDots() {
+            const container = document.getElementById('status-dots');
+            container.innerHTML = '';
+            for(let i=0; i<10; i++) {
+                const dot = document.createElement('span');
+                dot.className = 'dot';
+                if(state.results[i]) {
+                    if(state.results[i].status === 'correct') dot.classList.add('dot-correct');
+                    else if(state.results[i].status === 'wrong') dot.classList.add('dot-wrong');
+                    else dot.classList.add('dot-skip');
+                }
+                container.appendChild(dot);
+            }
         }
 
-        function handleSelect(i, el) {
+        function check(idx, el) {
             if(state.answered) return;
             state.answered = true;
-            const q = state.db[state.idx];
-            const isCorrect = i === q.correct;
+            const absoluteIdx = ((state.level - 1) * 10) + state.qIndex;
+            const q = state.db[absoluteIdx];
+            const correct = idx === q.correct;
+
+            document.getElementById('options-grid').classList.add('pointer-events-none');
+            if(correct) {
+                el.classList.add('bg-green-900', 'border-green-500');
+                state.score += 100;
+                state.results[state.qIndex] = { q: q.q, status: 'correct' };
+            } else {
+                el.classList.add('bg-red-900', 'border-red-500');
+                document.getElementById('options-grid').children[q.correct].classList.add('bg-green-900', 'border-green-500');
+                state.results[state.qIndex] = { q: q.q, status: 'wrong' };
+            }
+
+            document.getElementById('exp-text').innerText = q.exp;
+            document.getElementById('feedback').classList.remove('hidden');
+            updateDots();
+        }
+
+        function skipQuestion() {
+            if(state.answered) return;
+            const absoluteIdx = ((state.level - 1) * 10) + state.qIndex;
+            state.results[state.qIndex] = { q: state.db[absoluteIdx].q, status: 'skip' };
+            handleNext();
+        }
+
+        function handleNext() {
+            state.qIndex++;
+            if(state.qIndex >= 10) {
+                showLevelResult();
+            } else {
+                render();
+            }
+        }
+
+        function showLevelResult() {
+            document.getElementById('quiz-ui').classList.add('hidden');
+            document.getElementById('result-ui').classList.remove('hidden');
             
-            document.getElementById('options').classList.add('pointer-events-none');
-            if(isCorrect) { el.classList.add('correct'); state.score += 100; }
-            else { el.classList.add('wrong'); document.getElementById('options').children[q.correct].classList.add('correct'); }
+            const sacha = state.results.filter(r => r.status === 'correct').length;
+            const khota = state.results.filter(r => r.status === 'wrong').length;
+            const skips = state.results.filter(r => r.status === 'skip').length;
 
-            document.getElementById('explanation').innerText = q.exp;
-            document.getElementById('next-panel').classList.remove('hidden');
-            save();
+            document.getElementById('sacha-count').innerText = sacha;
+            document.getElementById('khota-count').innerText = khota;
+            document.getElementById('skip-count').innerText = skips;
+
+            const bhet = weapons[Math.floor(Math.random() * weapons.length)];
+            document.getElementById('gift-text').innerText = `તમારા પરાક્રમ બદલ તમને ભેટમાં મળ્યું છે: ${bhet}!`;
+            
+            if(!state.passedLevels.includes(state.level)) {
+                state.passedLevels.push(state.level);
+                localStorage.setItem('mb_passed', JSON.stringify(state.passedLevels));
+            }
+            checkSkipBtn();
         }
 
-        function nextQuest() {
-            state.idx++;
-            if(state.idx >= 1000) showVictory();
-            else render();
+        function nextLevel() {
+            state.level++;
+            state.qIndex = 0;
+            state.results = [];
+            localStorage.setItem('mb_lvl', state.level);
+            render();
         }
 
-        function updateProgress() {
-            const perc = (state.idx / 1000) * 100;
-            document.getElementById('bow-arrow').style.left = `calc(${perc}% - 20px)`;
+        function prevLevel() {
+            if(state.level <= 1) return;
+            state.level--;
+            state.qIndex = 0;
+            state.results = [];
+            localStorage.setItem('mb_lvl', state.level);
+            render();
         }
 
-        function showVictory() {
-            document.getElementById('game-ui').classList.add('hidden');
-            document.getElementById('victory-ui').classList.remove('hidden');
-            document.getElementById('v-score').innerText = `Score: ${state.score}`;
-            document.getElementById('v-count').innerText = `Total: 1000`;
+        function retryLevel() {
+            state.qIndex = 0;
+            state.results = [];
+            render();
         }
 
-        function save() {
-            localStorage.setItem('mb_i', state.idx);
-            localStorage.setItem('mb_s', state.score);
+        function checkSkipBtn() {
+            const btn = document.getElementById('skip-btn');
+            if(state.passedLevels.includes(state.level)) btn.classList.remove('hidden');
+            else btn.classList.add('hidden');
         }
 
-        async function shareGame() {
-            const text = `🚩 મેં મહાભારત રણસંગ્રામમાં ${state.score} સ્કોર કર્યો છે! ૧૦૦૦ પ્રશ્નોનું જ્ઞાન મેળવ્યું. રમો: ${window.location.href}`;
-            if(navigator.share) await navigator.share({ text: text });
-            else prompt("Copy this:", text);
+        function showSummary() {
+            let summaryText = `Warrior: ${state.user}\nLevel ${state.level} Summary:\n`;
+            state.results.forEach((r, i) => {
+                summaryText += `${i+1}. [${r.status.toUpperCase()}] ${r.q}\n`;
+            });
+            alert(summaryText); // In a real app, this would be a custom modal
+        }
+
+        function toggleLang() {
+            state.lang = state.lang === 'gu' ? 'en' : 'gu';
+            loadDB().then(render);
         }
 
         window.onload = init;
