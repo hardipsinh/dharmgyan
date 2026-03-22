@@ -507,7 +507,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.log("Tracked:", data.website, "count:", data.count);
 
     const hitCountEl = document.getElementById("hitCount");
-    if (hitCountEl) hitCountEl.textContent = `Hits: ${data.count}`;
+    if (hitCountEl) hitCountEl.textContent = `${data.count}`;
   } catch (err) {
     clearTimeout(timeout);
     console.error("Error calling tracker:", err);
