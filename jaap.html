@@ -108,7 +108,7 @@
             <button onclick="toggleBhaktimala()" class="glass-ui text-amber-200 px-4 py-2 rounded-full font-bold text-sm border border-amber-900/50 shadow-inner">📜 ભક્તિમાલા</button>
         </div>
         <div class="flex items-center gap-2">
-            <span> ભક્તો :<div id="hitCount"> </div> </span>
+            <span><div id="hitCount"> </div> </span>
             <span id="wakeLockStatus" class="text-[9px] font-bold text-green-500 opacity-50">સક્રિય</span>
             <button onclick="toggleSettings()" class="glass-ui p-3 rounded-full text-xl text-amber-200">⚙️</button>
         </div>
@@ -484,7 +484,7 @@ async function trackVisit() {
     console.log("Tracked:", data.website, "count:", data.count);
 
     const hitCountEl = document.getElementById("hitCount");
-    if (hitCountEl) hitCountEl.textContent = `${data.count}`;
+    if (hitCountEl) hitCountEl.textContent = `ભક્તો:${data.count}`;
   } catch (err) {
     clearTimeout(timeout);
     console.error("Error calling tracker:", err);
