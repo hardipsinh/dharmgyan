@@ -1,0 +1,334 @@
+
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>દિવ્ય ભક્તિ માળા</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Gujarati:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans Gujarati', sans-serif;
+            background: linear-gradient(180deg, #fffaf0 0%, #ffe4b5 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+            user-select: none;
+        }
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            animation: floatUp 1.8s ease-out forwards;
+            font-weight: bold;
+            color: #d94200;
+            font-size: 1.6rem;
+            z-index: 40;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(0.6); opacity: 0; }
+            30% { opacity: 1; transform: translateY(-30px) scale(1.1); }
+            100% { transform: translateY(-450px) scale(1.8) rotate(10deg); opacity: 0; }
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+        .music-active {
+            background: #ea580c !important;
+            color: white !important;
+            box-shadow: 0 0 15px rgba(234, 88, 12, 0.4);
+        }
+        #mainTap:active { transform: scale(0.95); }
+    </style>
+</head>
+<body class="p-4">
+
+    <!-- Top Navigation -->
+    <div class="w-full max-w-md flex justify-between items-center mb-6 z-50">
+        <button onclick="toggleBhaktimala()" class="glass-panel text-orange-900 px-5 py-2 rounded-full font-bold text-sm border border-orange-200">
+            📜 ભક્તિમાલા
+        </button>
+        <button onclick="toggleSettings()" class="glass-panel p-3 rounded-full text-xl shadow-sm">
+            ⚙️
+        </button>
+    </div>
+
+    <!-- Mantra Info -->
+    <div class="text-center mb-4 z-10">
+        <p class="text-orange-400 text-[10px] font-bold tracking-widest uppercase">શ્રી હરિ સ્મરણ</p>
+        <h1 id="mantraTitle" class="text-4xl font-bold text-orange-950">રાધા કૃષ્ણ</h1>
+    </div>
+
+    <!-- Stats Display -->
+    <div class="grid grid-cols-2 gap-4 w-full max-w-xs mb-6 z-10">
+        <div class="glass-panel p-4 rounded-[2rem] text-center border-b-4 border-orange-500">
+            <p class="text-[10px] font-bold text-gray-500">માળા</p>
+            <h2 id="malaCount" class="text-4xl font-bold text-orange-600">0</h2>
+        </div>
+        <div class="glass-panel p-4 rounded-[2rem] text-center border-b-4 border-red-500">
+            <p class="text-[10px] font-bold text-gray-500">જાપ</p>
+            <h2 id="japCount" class="text-4xl font-bold text-red-600">0</h2>
+        </div>
+        <div class="col-span-2 text-center">
+            <p class="text-[11px] font-bold text-orange-800/40 italic">કુલ ગણતરી: <span id="totalJaps">0</span></p>
+        </div>
+    </div>
+
+    <!-- Interaction Area -->
+    <div id="interactionArea" class="relative flex-1 w-full flex items-center justify-center">
+        <button id="mainTap" class="w-64 h-64 bg-white rounded-full shadow-2xl border-[12px] border-orange-50 flex flex-col items-center justify-center transition-all z-20 overflow-hidden">
+            <span id="btnMantra" class="text-2xl font-bold text-orange-600">રાધા કૃષ્ણ</span>
+            <span class="text-[10px] text-orange-300 font-bold mt-2 uppercase">જાપ કરો</span>
+        </button>
+    </div>
+
+    <!-- Footer Controls -->
+    <div class="w-full max-w-sm mb-8 space-y-4 z-50">
+        <div class="flex justify-evenly items-center">
+            <button onclick="toggleMusic('flute')" id="btn-flute" class="glass-panel w-16 h-16 rounded-3xl text-3xl flex items-center justify-center transition-all">🪈</button>
+            <button id="micToggle" class="w-20 h-20 bg-white border-4 border-orange-100 rounded-full shadow-xl text-3xl flex items-center justify-center transition-all relative">
+                <span id="micIcon">🎤</span>
+                <div id="micRing" class="absolute inset-0 rounded-full border-2 border-orange-500 animate-ping hidden"></div>
+            </button>
+            <button onclick="toggleMusic('sitar')" id="btn-sitar" class="glass-panel w-16 h-16 rounded-3xl text-3xl flex items-center justify-center transition-all">🪕</button>
+        </div>
+        <div id="voiceLabel" class="text-center text-[10px] font-bold text-orange-600/60 uppercase h-4">માઇક બંધ છે</div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="fixed inset-0 bg-orange-950/30 backdrop-blur-md z-[100] hidden flex items-center justify-center p-6">
+        <div class="bg-white rounded-[2.5rem] p-8 w-full max-w-sm shadow-2xl">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">સેટિંગ્સ</h3>
+            <input type="text" id="inputName" placeholder="તમારું નામ" class="w-full p-4 bg-orange-50 rounded-2xl mb-4 border border-orange-100 outline-none">
+            <input type="text" id="inputMantra" placeholder="મંત્ર લખો" class="w-full p-4 bg-orange-50 rounded-2xl mb-2 border border-orange-100 outline-none">
+            <p class="text-[10px] text-gray-400 mb-6 px-2">* મંત્ર બદલવાથી જુનો રેકોર્ડ ભક્તિમાલામાં સેવ થશે.</p>
+            <button onclick="saveSettings()" class="w-full bg-orange-600 text-white py-4 rounded-2xl font-bold shadow-lg">શરૂ કરો</button>
+        </div>
+    </div>
+
+    <!-- Bhaktimala Log Modal -->
+    <div id="bhaktimalaModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] hidden flex items-end">
+        <div class="bg-white w-full h-[75vh] rounded-t-[3rem] p-8 overflow-y-auto shadow-2xl">
+            <div class="w-16 h-1.5 bg-gray-200 rounded-full mx-auto mb-6"></div>
+            <h3 class="text-2xl font-bold text-orange-900 mb-6 text-center">મારી ભક્તિમાલા</h3>
+            <div id="logContent" class="space-y-4">
+                <!-- Logs list -->
+            </div>
+            <button onclick="toggleBhaktimala()" class="mt-8 w-full py-4 text-gray-400 font-bold uppercase text-sm">બંધ કરો</button>
+        </div>
+    </div>
+
+    <!-- Audio (Ambient Loops) -->
+    <audio id="audioFlute" loop src="https://onlinesequencer.net/app/proxy.php?f=1557112"></audio>
+    <audio id="audioSitar" loop src="https://onlinesequencer.net/app/proxy.php?f=3065842"></audio>
+
+    <script>
+        const state = {
+            name: localStorage.getItem('bm_name') || "",
+            mantra: localStorage.getItem('bm_mantra') || "રાધા કૃષ્ણ",
+            cur: parseInt(localStorage.getItem('bm_cur')) || 0,
+            mala: parseInt(localStorage.getItem('bm_mala')) || 0,
+            listening: false,
+            wakeLock: null
+        };
+
+        const recognition = ('webkitSpeechRecognition' in window) ? new webkitSpeechRecognition() : null;
+        if (recognition) {
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'gu-IN';
+
+            recognition.onresult = (event) => {
+                let currentTranscript = "";
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    currentTranscript += event.results[i][0].transcript.toLowerCase();
+                }
+
+                document.getElementById('voiceLabel').innerText = currentTranscript;
+
+                const target = state.mantra.toLowerCase();
+                // Phonetic / fuzzy matching for better speed
+                if (currentTranscript.includes(target) || 
+                    currentTranscript.includes(target.replace(/\s/g, '')) ||
+                    isPhoneticMatch(currentTranscript, target)) {
+                    triggerJap();
+                }
+            };
+            recognition.onend = () => { if(state.listening) recognition.start(); };
+        }
+
+        function isPhoneticMatch(t, target) {
+            if (target.includes("રામ") && t.includes("રામ")) return true;
+            if (target.includes("રાધા") && (t.includes("રાધા") || t.includes("કૃષ્ણ"))) return true;
+            return false;
+        }
+
+        let lastCall = 0;
+        function triggerJap() {
+            const now = Date.now();
+            if (now - lastCall < 300) return; // ૩૦૦ms ગેપ જેથી બહુ સ્પીડમાં ખોટું ન ગણાય
+            
+            lastCall = now;
+            state.cur++;
+            
+            if (state.cur >= 108) {
+                state.mala++;
+                state.cur = 0;
+                if (navigator.vibrate) navigator.vibrate([80, 40, 80]);
+            }
+            
+            saveLocal();
+            updateDisplay();
+            createParticle();
+        }
+
+        function createParticle() {
+            const container = document.getElementById('interactionArea');
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.innerText = state.mantra;
+            p.style.left = `calc(50% + ${(Math.random() - 0.5) * 180}px)`;
+            p.style.top = '45%';
+            container.appendChild(p);
+            setTimeout(() => p.remove(), 1800);
+        }
+
+        function updateDisplay() {
+            document.getElementById('mantraTitle').innerText = state.mantra;
+            document.getElementById('btnMantra').innerText = state.mantra;
+            document.getElementById('japCount').innerText = state.cur;
+            document.getElementById('malaCount').innerText = state.mala;
+            document.getElementById('totalJaps').innerText = (state.mala * 108) + state.cur;
+        }
+
+        function saveLocal() {
+            localStorage.setItem('bm_cur', state.cur);
+            localStorage.setItem('bm_mala', state.mala);
+            localStorage.setItem('bm_mantra', state.mantra);
+            localStorage.setItem('bm_name', state.name);
+        }
+
+        function toggleSettings() {
+            document.getElementById('inputName').value = state.name;
+            document.getElementById('inputMantra').value = state.mantra;
+            document.getElementById('settingsModal').classList.toggle('hidden');
+        }
+
+        function saveSettings() {
+            const n = document.getElementById('inputName').value.trim();
+            const m = document.getElementById('inputMantra').value.trim();
+
+            if (m && m !== state.mantra) {
+                // Log the previous mantra progress
+                const logs = JSON.parse(localStorage.getItem('bm_logs') || "[]");
+                logs.unshift({
+                    m: state.mantra,
+                    ma: state.mala,
+                    j: state.cur,
+                    d: new Date().toLocaleString('gu-IN')
+                });
+                localStorage.setItem('bm_logs', JSON.stringify(logs.slice(0, 30)));
+                
+                state.cur = 0;
+                state.mala = 0;
+            }
+
+            state.name = n;
+            state.mantra = m;
+            saveLocal();
+            updateDisplay();
+            document.getElementById('settingsModal').classList.add('hidden');
+            keepScreenAwake();
+        }
+
+        async function keepScreenAwake() {
+            if ('wakeLock' in navigator) {
+                try { state.wakeLock = await navigator.wakeLock.request('screen'); } catch(e){}
+            }
+        }
+
+        function toggleMusic(type) {
+            const f = document.getElementById('audioFlute');
+            const s = document.getElementById('audioSitar');
+            const bf = document.getElementById('btn-flute');
+            const bs = document.getElementById('btn-sitar');
+            
+            f.volume = 0.2; s.volume = 0.2;
+
+            if (type === 'flute') {
+                if (f.paused) { 
+                    f.play().catch(() => {}); s.pause(); 
+                    bf.classList.add('music-active'); bs.classList.remove('music-active');
+                } else { f.pause(); bf.classList.remove('music-active'); }
+            } else {
+                if (s.paused) { 
+                    s.play().catch(() => {}); f.pause(); 
+                    bs.classList.add('music-active'); bf.classList.remove('music-active');
+                } else { s.pause(); bs.classList.remove('music-active'); }
+            }
+        }
+
+        document.getElementById('micToggle').addEventListener('click', () => {
+            if (!recognition) return alert("બ્રાઉઝર સપોર્ટ નથી");
+            const ring = document.getElementById('micRing');
+            const label = document.getElementById('voiceLabel');
+            
+            if (state.listening) {
+                recognition.stop();
+                state.listening = false;
+                document.getElementById('micIcon').innerText = "🎤";
+                ring.classList.add('hidden');
+                label.innerText = "માઇક બંધ છે";
+                if(state.wakeLock) state.wakeLock.release();
+            } else {
+                recognition.start();
+                state.listening = true;
+                document.getElementById('micIcon').innerText = "🛑";
+                ring.classList.remove('hidden');
+                label.innerText = "સાંભળી રહ્યું છે...";
+                keepScreenAwake();
+            }
+        });
+
+        function toggleBhaktimala() {
+            const modal = document.getElementById('bhaktimalaModal');
+            if (modal.classList.contains('hidden')) {
+                renderLogs();
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+
+        function renderLogs() {
+            const logs = JSON.parse(localStorage.getItem('bm_logs') || "[]");
+            const container = document.getElementById('logContent');
+            container.innerHTML = logs.map(l => `
+                <div class="glass-panel p-5 rounded-3xl border-l-8 border-orange-500 shadow-sm">
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="font-bold text-orange-900">${l.m}</h4>
+                        <span class="text-[9px] text-gray-400 font-bold">${l.d}</span>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="text-[10px] text-orange-600 bg-orange-50 px-3 py-1 rounded-full font-bold">માળા: ${l.ma}</div>
+                        <div class="text-[10px] text-red-600 bg-red-50 px-3 py-1 rounded-full font-bold">વધારાના જાપ: ${l.j}</div>
+                    </div>
+                </div>
+            `).join('') || '<p class="text-center text-gray-300 py-10 font-bold">હજી કોઈ ભક્તિ રેકોર્ડ નથી...</p>';
+        }
+
+        document.getElementById('mainTap').addEventListener('click', triggerJap);
+
+        window.onload = () => {
+            if (!state.name) toggleSettings();
+            updateDisplay();
+        };
+    </script>
+</body>
+</html>
+
