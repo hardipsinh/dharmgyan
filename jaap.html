@@ -341,6 +341,7 @@
             updateDisplay();
             updateBeads();
             spawnFloatingText();
+            
         }
 
         function manualJap() { initAudio(); triggerJap(); }
@@ -374,6 +375,8 @@
             document.getElementById('inputName').value = state.name;
             document.getElementById('inputMantra').value = state.mantra;
             document.getElementById('settingsModal').classList.toggle('hidden');
+
+            
         }
 
         function saveSettings() {
@@ -389,6 +392,8 @@
             saveData(); updateDisplay(); createMala();
             document.getElementById('settingsModal').classList.add('hidden');
             requestWakeLock();
+trackVisit();
+            
         }
 
         function toggleInfo() { document.getElementById('infoModal').classList.toggle('hidden'); }
