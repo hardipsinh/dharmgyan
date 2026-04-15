@@ -1,0 +1,384 @@
+
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>દિવ્ય રુદ્રાક્ષ માળા</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Gujarati:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans Gujarati', sans-serif;
+            background: radial-gradient(circle, #2d1a0a 0%, #1a0f05 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #fef3c7;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        .bead {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: radial-gradient(circle, #8b4513, #5d2e0a);
+            border-radius: 50%;
+            box-shadow: inset -1px -1px 3px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+        }
+        .bead.active {
+            background: radial-gradient(circle, #ffcc00, #b8860b);
+            box-shadow: 0 0 8px #ffcc00;
+            transform: scale(1.4);
+        }
+
+        #mainTap {
+            width: 190px;
+            height: 190px;
+            background: radial-gradient(circle, #6d3a1a 0%, #3d1f06 100%);
+            border-radius: 50%;
+            border: 6px solid #8b4513;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7), inset 0 0 15px rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+            z-index: 20;
+            overflow: hidden;
+        }
+
+        .bead-texture {
+            position: absolute;
+            inset: 0;
+            background: url('https://www.transparenttextures.com/patterns/leather.png');
+            opacity: 0.3;
+            border-radius: 50%;
+        }
+        .rotating-bg {
+            animation: rotateBead 0.5s ease-out;
+        }
+        @keyframes rotateBead {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .mala-container {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .glass-ui {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Spiritual Score Card Hidden Styling */
+        #shareCard {
+            width: 450px;
+            background: #1a0f05;
+            background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+            padding: 40px;
+            border: 12px double #8b4513;
+            color: #fef3c7;
+            position: absolute;
+            left: -9999px;
+            text-align: center;
+        }
+        .om-symbol {
+            font-size: 40px;
+            color: #ffcc00;
+            margin-bottom: 10px;
+            display: block;
+        }
+    </style>
+</head>
+<body class="p-4">
+
+    <!-- Top Bar -->
+    <div class="w-full max-w-md flex justify-between items-center mb-2 z-50">
+        <div class="flex gap-2">
+            <button onclick="toggleInfo()" class="glass-ui w-10 h-10 rounded-full flex items-center justify-center text-amber-200 border border-amber-900/50">ℹ️</button>
+            <button onclick="toggleBhaktimala()" class="glass-ui text-amber-200 px-4 py-2 rounded-full font-bold text-sm border border-amber-900/50 shadow-lg">📜 મારી ભક્તિમાલા</button>
+        </div>
+        <button onclick="toggleSettings()" class="glass-ui p-3 rounded-full text-xl text-amber-200">⚙️</button>
+    </div>
+
+    <!-- Main Display -->
+    <div class="text-center mb-4">
+        <h1 id="mantraTitle" class="text-3xl font-bold text-amber-500 drop-shadow-md">રાધા કૃષ્ણ</h1>
+        <p class="text-[10px] text-amber-800 font-bold tracking-widest uppercase">શ્રી રુદ્રાક્ષ સાધના</p>
+    </div>
+
+    <!-- Mala Visualizer -->
+    <div class="flex-1 flex items-center justify-center w-full relative">
+        <div id="malaRotator" class="mala-container">
+            <div id="beadsContainer"></div>
+            <div id="mainTap" onclick="manualJap()">
+                <div id="beadTexture" class="bead-texture"></div>
+                <span id="btnMantra" class="text-xl font-bold text-amber-100 relative z-10 px-4 text-center">રાધા કૃષ્ણ</span>
+                <div class="mt-2 w-2 h-2 rounded-full bg-amber-600 animate-pulse relative z-10"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="w-full max-w-xs space-y-3 my-4 z-10">
+        <div class="grid grid-cols-2 gap-3">
+            <div class="glass-ui p-3 rounded-2xl text-center border-b-2 border-amber-600">
+                <p class="text-[9px] font-bold text-amber-700 uppercase">પૂર્ણ માળા</p>
+                <h2 id="malaCount" class="text-2xl font-bold text-amber-200">0</h2>
+            </div>
+            <div class="glass-ui p-3 rounded-2xl text-center border-b-2 border-orange-500">
+                <p class="text-[9px] font-bold text-amber-700 uppercase">વર્તમાન જાપ</p>
+                <h2 id="japCount" class="text-2xl font-bold text-orange-400">0</h2>
+            </div>
+        </div>
+        <div class="glass-ui p-2 rounded-xl text-center">
+            <p class="text-[11px] font-bold text-amber-500/60 uppercase">કુલ ગણતરી: <span id="totalCount" class="text-amber-100">0</span></p>
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="w-full max-w-sm mb-6 flex justify-center gap-6 z-50">
+        <button id="micToggle" class="w-16 h-16 bg-amber-900/30 border-2 border-amber-600 rounded-full shadow-2xl text-2xl flex items-center justify-center relative">
+            <span id="micIcon">🎤</span>
+            <div id="micRing" class="absolute inset-0 rounded-full border border-amber-400 animate-ping hidden"></div>
+        </button>
+    </div>
+
+    <!-- Spiritual Share Card (Hidden) -->
+    <div id="shareCard">
+        <span class="om-symbol">ૐ</span>
+        <h2 class="text-3xl font-bold text-amber-500 mb-2">સાધના રિપોર્ટ</h2>
+        <div class="w-24 h-0.5 bg-amber-700 mx-auto mb-6"></div>
+        
+        <p class="text-lg text-amber-100 mb-6 italic">
+            "સાધક <span id="cardUserName" class="text-amber-400 not-italic font-bold">...</span> ની ભક્તિ યાત્રા"
+        </p>
+
+        <div class="bg-black/40 p-6 rounded-3xl border border-amber-900/50 mb-6">
+            <p class="text-xs text-amber-600 font-bold uppercase tracking-widest mb-2">વર્તમાન સાધના</p>
+            <h3 id="cardMantra" class="text-2xl font-bold text-amber-200 mb-1">...</h3>
+            <p id="cardMantraStats" class="text-amber-500 font-bold">0 માળા | 0 જાપ</p>
+            <div class="mt-4 pt-4 border-t border-amber-900/30">
+                <p class="text-xs text-amber-700">કુલ પુણ્ય ગણતરી</p>
+                <p id="cardTotalScore" class="text-4xl font-bold text-amber-100">0</p>
+            </div>
+        </div>
+
+        <div class="text-left mb-6">
+            <p class="text-xs font-bold text-amber-600 mb-3 border-l-4 border-amber-600 pl-2">ભક્તિ ભાથું (તાજેતરની માળા)</p>
+            <div id="cardLogsTable" class="space-y-2 text-sm">
+                <!-- Data goes here -->
+            </div>
+        </div>
+
+        <div class="mt-8 border-t-2 border-dotted border-amber-900 pt-4">
+            <p class="text-[12px] font-bold text-amber-400 italic">શુભમ ભવતુ । કલ્યાણમસ્તુ ।</p>
+            <p class="text-[10px] text-amber-800 mt-2 font-bold tracking-widest">DIGITAL RUDRAKSH MALA</p>
+            <p class="text-[9px] text-amber-900">rudrakshmala.live</p>
+        </div>
+    </div>
+
+    <!-- Bhaktimala Modal -->
+    <div id="bhaktimalaModal" class="fixed inset-0 bg-black/80 z-[100] hidden flex items-end backdrop-blur-sm">
+        <div class="bg-[#1a0f05] w-full h-[85vh] rounded-t-[3rem] p-8 overflow-hidden border-t-2 border-amber-800 flex flex-col">
+            <div class="w-12 h-1.5 bg-amber-900/50 rounded-full mx-auto mb-6"></div>
+            
+            <!-- Share Options in Header of Bhaktimala -->
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-amber-500">મારી સાધના ડાયરી</h3>
+                <button onclick="generateShareImage()" class="bg-amber-700 text-white px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2 shadow-lg animate-pulse">
+                    <span>📤 રિપોર્ટ શેર કરો</span>
+                </button>
+            </div>
+
+            <div id="logContent" class="flex-1 overflow-y-auto space-y-4 pb-10">
+                <!-- Logs injected here -->
+            </div>
+
+            <button onclick="toggleBhaktimala()" class="w-full py-4 text-amber-900 font-bold text-xs">બંધ કરો</button>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="fixed inset-0 bg-black/80 z-[100] hidden flex items-center justify-center p-6">
+        <div class="bg-[#2d1a0a] border border-amber-900/50 rounded-[2.5rem] p-8 w-full max-w-sm">
+            <h3 class="text-xl font-bold mb-6 text-center text-amber-500">સેટિંગ્સ</h3>
+            <input type="text" id="inputName" placeholder="તમારું નામ" class="w-full p-4 bg-black/30 rounded-2xl mb-4 border border-amber-900 outline-none text-amber-200">
+            <input type="text" id="inputMantra" placeholder="મંત્ર" class="w-full p-4 bg-black/30 rounded-2xl mb-6 border border-amber-900 outline-none text-amber-200">
+            <button onclick="saveSettings()" class="w-full bg-amber-700 text-white py-4 rounded-2xl font-bold shadow-lg">સાધના શરૂ કરો</button>
+        </div>
+    </div>
+
+    <script>
+        const state = {
+            name: localStorage.getItem('bm_name') || "સાધક",
+            mantra: localStorage.getItem('bm_mantra') || "રાધા કૃષ્ણ",
+            cur: parseInt(localStorage.getItem('bm_cur')) || 0,
+            mala: parseInt(localStorage.getItem('bm_mala')) || 0,
+            listening: false,
+            audioCtx: null
+        };
+
+        function createMala() {
+            const container = document.getElementById('beadsContainer');
+            container.innerHTML = '';
+            for (let i = 0; i < 108; i++) {
+                const bead = document.createElement('div');
+                bead.className = 'bead'; bead.id = `bead-${i}`;
+                const angle = (i * (360 / 108)) * (Math.PI / 180);
+                const x = 145 * Math.cos(angle); const y = 145 * Math.sin(angle);
+                bead.style.left = `calc(50% + ${x}px - 5px)`; bead.style.top = `calc(50% + ${y}px - 5px)`;
+                container.appendChild(bead);
+            }
+            updateBeads();
+        }
+
+        function updateBeads() {
+            for (let i = 0; i < 108; i++) {
+                const b = document.getElementById(`bead-${i}`);
+                if (i < state.cur) b.classList.add('active');
+                else b.classList.remove('active');
+            }
+            document.getElementById('malaRotator').style.transform = `rotate(${-(state.cur * (360 / 108))}deg)`;
+        }
+
+        function triggerJap() {
+            state.cur++;
+            const tex = document.getElementById('beadTexture');
+            tex.classList.remove('rotating-bg'); void tex.offsetWidth; tex.classList.add('rotating-bg');
+
+            if (state.cur > 108) {
+                state.mala++; state.cur = 1;
+                const logs = JSON.parse(localStorage.getItem('bm_logs') || "[]");
+                logs.unshift({ m: state.mantra, ma: 1, j: 0, d: new Date().toLocaleString('gu-IN') });
+                localStorage.setItem('bm_logs', JSON.stringify(logs.slice(0, 100)));
+                if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+            }
+            saveData(); updateDisplay(); updateBeads();
+        }
+
+        function manualJap() { triggerJap(); }
+
+        function updateDisplay() {
+            document.getElementById('mantraTitle').innerText = state.mantra;
+            document.getElementById('btnMantra').innerText = state.mantra;
+            document.getElementById('japCount').innerText = state.cur;
+            document.getElementById('malaCount').innerText = state.mala;
+            document.getElementById('totalCount').innerText = (state.mala * 108) + state.cur;
+        }
+
+        function saveData() {
+            localStorage.setItem('bm_cur', state.cur);
+            localStorage.setItem('bm_mala', state.mala);
+            localStorage.setItem('bm_mantra', state.mantra);
+            localStorage.setItem('bm_name', state.name);
+        }
+
+        function toggleBhaktimala() {
+            const m = document.getElementById('bhaktimalaModal');
+            if (m.classList.contains('hidden')) {
+                const logs = JSON.parse(localStorage.getItem('bm_logs') || "[]");
+                document.getElementById('logContent').innerHTML = logs.map(l => `
+                    <div class="glass-ui p-4 rounded-2xl border-l-4 border-amber-600">
+                        <p class="text-[10px] text-amber-700 font-bold">${l.d}</p>
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-amber-200">${l.m}</span>
+                            <span class="text-amber-500 font-bold">${l.ma} માળા પૂર્ણ</span>
+                        </div>
+                    </div>`).join('') || '<p class="text-center py-10 opacity-30">હજી કોઈ સાધના નોંધાઈ નથી</p>';
+                m.classList.remove('hidden');
+            } else m.classList.add('hidden');
+        }
+
+        async function generateShareImage() {
+            const logs = JSON.parse(localStorage.getItem('bm_logs') || "[]");
+            const totalScore = (state.mala * 108) + state.cur;
+            
+            document.getElementById('cardUserName').innerText = state.name;
+            document.getElementById('cardTotalScore').innerText = totalScore;
+            document.getElementById('cardMantra').innerText = state.mantra;
+            document.getElementById('cardMantraStats').innerText = `${state.mala} માળા | ${state.cur} જાપ`;
+            
+            const logTable = document.getElementById('cardLogsTable');
+            logTable.innerHTML = logs.slice(0, 4).map(l => `
+                <div class="flex justify-between border-b border-amber-900/20 py-1">
+                    <span class="text-amber-200">${l.m}</span>
+                    <span class="text-amber-600 font-bold">${l.ma} માળા</span>
+                </div>`).join('');
+
+            const card = document.getElementById('shareCard');
+            const canvas = await html2canvas(card, { backgroundColor: '#1a0f05', scale: 2 });
+            
+            canvas.toBlob(async (blob) => {
+                const file = new File([blob], 'my_sadhana.png', { type: 'image/png' });
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    await navigator.share({
+                        title: 'મારી ડિજિટલ રુદ્રાક્ષ સાધના',
+                        text: `મેં આજે ${state.mantra} ના ${totalScore} જાપ કર્યા છે.`,
+                        files: [file],
+                        url: window.location.href
+                    });
+                } else {
+                    const link = document.createElement('a');
+                    link.download = 'spiritual-sadhana-score.png';
+                    link.href = canvas.toDataURL();
+                    link.click();
+                }
+            });
+        }
+
+        const recognition = ('webkitSpeechRecognition' in window) ? new webkitSpeechRecognition() : null;
+        if (recognition) {
+            recognition.continuous = true; recognition.interimResults = true; recognition.lang = 'gu-IN';
+            recognition.onresult = (e) => {
+                let t = ""; for (let i = e.resultIndex; i < e.results.length; ++i) t += e.results[i][0].transcript.toLowerCase();
+                if (t.includes(state.mantra.toLowerCase())) triggerJap();
+            };
+            recognition.onend = () => { if(state.listening) recognition.start(); };
+        }
+
+        document.getElementById('micToggle').addEventListener('click', () => {
+            if (state.listening) {
+                recognition.stop(); state.listening = false;
+                document.getElementById('micRing').classList.add('hidden');
+                document.getElementById('micIcon').innerText = "🎤";
+            } else {
+                recognition.start(); state.listening = true;
+                document.getElementById('micRing').classList.remove('hidden');
+                document.getElementById('micIcon').innerText = "🛑";
+            }
+        });
+
+        function toggleSettings() {
+            document.getElementById('inputName').value = state.name;
+            document.getElementById('inputMantra').value = state.mantra;
+            document.getElementById('settingsModal').classList.toggle('hidden');
+        }
+
+        function saveSettings() {
+            state.name = document.getElementById('inputName').value.trim() || "સાધક";
+            state.mantra = document.getElementById('inputMantra').value.trim() || "રાધા કૃષ્ણ";
+            saveData(); updateDisplay(); createMala();
+            document.getElementById('settingsModal').classList.add('hidden');
+        }
+
+        function toggleInfo() { alert("વોઇસ કંટ્રોલ માટે માઇક ચાલુ કરો અને મંત્ર બોલો."); }
+
+        window.onload = () => { createMala(); updateDisplay(); if(!localStorage.getItem('bm_name')) toggleSettings(); };
+    </script>
+</body>
+</html>
