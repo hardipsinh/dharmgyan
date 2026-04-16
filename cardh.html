@@ -240,7 +240,7 @@
                 <li class="flex gap-2"><span>🔸</span> <span><b>વોઈસ જાપ:</b> માઇક ચાલુ કરી મંત્ર બોલવાથી જાપ ગણાશે.</span></li>
                 <li class="flex gap-2"><span>🔸</span> <span><b>સ્ક્રીન ઓન:</b> આ એપ ખુલ્લી હશે ત્યાં સુધી ફોન સ્લીપ મોડમાં નહીં જાય.</span></li>
                 <li class="flex gap-2"><span>🔸</span> <span><b>ભક્તિમાલા:</b> બધી માળાનો સમય સાથેનો હિસાબ અહીં જોવા મળશે.</span></li>
-				<li class="flex gap-2"><span>🔸</span> <span><b>ભક્તિમાલા:</b> બધી માળાનો સમય સાથેનો હિસાબ અહીં જોવા મળશે.</span></li>
+				<li class="flex gap-2"><span>🔸</span> <span><b>શેર કરો:</b> આપના મિત્રો ને સ્ક્રેનશોટ share કરવા માટે ભક્તિમાળા ની બાજુનું બટન દબાવો.</span></li>
             </ul>
             <button onclick="toggleInfo()" class="w-full bg-amber-800 text-white py-3 rounded-xl font-bold mt-8">શરૂ કરો</button>
         </div>
@@ -514,7 +514,7 @@ trackVisit();
             
             const logTable = document.getElementById('cardLogsTable');
             logTable.innerHTML = logs.slice(0, 4).map(l => `
-                <div class="flex justify-between border-b border-amber-900/20 py-1">
+                <div class="flex justify-between border-amber-900/20 py-1">
                     <span class="text-amber-200">${l.m}</span>
                     <span class="text-amber-600 font-bold">${l.ma} માળા</span>
                 </div>`).join('');
@@ -527,7 +527,7 @@ trackVisit();
                 if (navigator.canShare && navigator.canShare({ files: [file] })) {
                     await navigator.share({
                         title: 'મારી ડિજિટલ સાધના',
-                        text: `મેં ${state.mantra} ના ${totalScore} જાપ કર્યા છે.`,
+                        text: `મેં ${state.mantra} ના ${totalScore} જાપ કર્યા છે. આપ પણ સાધના ચાલુ કરો`,
                         files: [file],
                         url: window.location.href
                     });
